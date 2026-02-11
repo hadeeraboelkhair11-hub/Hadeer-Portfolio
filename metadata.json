@@ -1,0 +1,8 @@
+{
+  "name": "Creative Web Portfolio",
+  "description": "An elegant, high-end portfolio for a web designer and developer specializing in informative websites and e-commerce solutions, featuring an AI project consultant.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
