@@ -6,12 +6,15 @@ import ServicesSection from './components/ServicesSection';
 import ProcessSection from './components/ProcessSection';
 import PortfolioGrid from './components/PortfolioGrid';
 import ReviewsSection from './components/ReviewsSection';
-import ContactForm from './components/ContactForm';
 import AIConsultant from './components/AIConsultant';
+import ContactForm from './components/ContactForm';
 import Footer from './components/Footer';
+
+export type Language = 'ar' | 'en';
 
 const App: React.FC = () => {
   const [activeSection, setActiveSection] = useState('home');
+  const [lang, setLang] = useState<Language>('ar');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,41 +33,47 @@ const App: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Update document direction based on language
+  useEffect(() => {
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = lang;
+  }, [lang]);
+
   return (
     <div className="min-h-screen selection:bg-[#c5a059] selection:text-[#2d0101]">
-      <Header activeSection={activeSection} />
+      <Header activeSection={activeSection} lang={lang} setLang={setLang} />
       
       <main>
         <section id="home" className="rich-bg text-white">
-          <Hero />
+          <Hero lang={lang} />
         </section>
 
         <section id="services" className="py-32 px-6 relative bg-[#f9f7f2] marble-texture">
-          <ServicesSection />
+          <ServicesSection lang={lang} />
         </section>
 
         <section id="process" className="py-32 px-6 bg-white border-b border-[#2d0101]/5">
-          <ProcessSection />
-        </section>
-
-        <section id="ai-advisor" className="py-32 px-6 bg-[#f9f7f2] overflow-hidden">
-          <AIConsultant />
+          <ProcessSection lang={lang} />
         </section>
 
         <section id="portfolio" className="py-32 px-6 bg-[#0f0f0f] text-white overflow-hidden">
-          <PortfolioGrid />
+          <PortfolioGrid lang={lang} />
+        </section>
+
+        <section id="ai-consultant" className="py-32 px-6 bg-[#f9f7f2] marble-texture">
+          <AIConsultant />
         </section>
 
         <section id="reviews" className="py-32 px-6 bg-[#2d0101] text-white">
-          <ReviewsSection />
+          <ReviewsSection lang={lang} />
         </section>
 
         <section id="contact" className="py-32 px-6 bg-white">
-          <ContactForm />
+          <ContactForm lang={lang} />
         </section>
       </main>
 
-      <Footer />
+      <Footer lang={lang} />
     </div>
   );
 };

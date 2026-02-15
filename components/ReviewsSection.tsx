@@ -1,40 +1,97 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Language } from '../App';
 
-const ReviewsSection: React.FC = () => {
-  const reviews = [
-    { 
-      name: 'عبدالله السعدي', 
-      location: 'سلطنة عُمان',
-      text: 'شغل فخم واحترافي جداً. هدير فاهمة السوق الخليجي كويس وقدرت تطلع المتجر والفيديوهات بشكل عالمي.',
-      rating: 5 
+interface ReviewsSectionProps {
+  lang: Language;
+}
+
+// Fixed TS errors for motion props by casting motion elements.
+const MotionSpan = motion.span as any;
+const MotionH2 = motion.h2 as any;
+const MotionDiv = motion.div as any;
+
+const ReviewsSection: React.FC<ReviewsSectionProps> = ({ lang }) => {
+  const translations = {
+    ar: {
+      tag: 'شركاء النجاح',
+      title: 'آراء أعتز بها',
+      reviews: [
+        { 
+          name: 'عبدالله السعدي', 
+          location: 'سلطنة عُمان',
+          text: 'شغل فخم واحترافي جداً. هدير فاهمة السوق الخليجي كويس وقدرت تطلع المتجر والفيديوهات بشكل عالمي.',
+          rating: 5 
+        },
+        { 
+          name: 'نورة الفايز', 
+          location: 'المملكة العربية السعودية',
+          text: 'سرعة في التنفيذ وذوق فني عالي. فيديوهات الـ AI اللي سويناها للمنتجات جابت تفاعل غير طبيعي.',
+          rating: 5 
+        },
+        { 
+          name: 'خالد المنصوري', 
+          location: 'الإمارات العربية المتحدة',
+          text: 'تعامل راقي جداً. الخبرة واضحة في كل لمسة تصميم، أنصح بالتعامل معها لأي مشروع يبحث عن التميز.',
+          rating: 5 
+        }
+      ]
     },
-    { 
-      name: 'نورة الفايز', 
-      location: 'المملكة العربية السعودية',
-      text: 'سرعة في التنفيذ وذوق فني عالي. فيديوهات الـ AI اللي سويناها للمنتجات جابت تفاعل غير طبيعي.',
-      rating: 5 
-    },
-    { 
-      name: 'خالد المنصوري', 
-      location: 'الإمارات العربية المتحدة',
-      text: 'تعامل راقي جداً. الخبرة واضحة في كل لمسة تصميم، أنصح بالتعامل معها لأي مشروع يبحث عن التميز.',
-      rating: 5 
+    en: {
+      tag: 'Success Partners',
+      title: 'Testimonials',
+      reviews: [
+        { 
+          name: 'Abdullah Al-Saadi', 
+          location: 'Oman',
+          text: 'Luxurious and professional work. Hadeer understands the Gulf market well and delivered global quality.',
+          rating: 5 
+        },
+        { 
+          name: 'Noura Al-Fayez', 
+          location: 'Saudi Arabia',
+          text: 'High speed and artistic taste. The AI product videos we made got incredible engagement.',
+          rating: 5 
+        },
+        { 
+          name: 'Khalid Al-Mansouri', 
+          location: 'UAE',
+          text: 'Very professional handling. Experience is clear in every touch. Highly recommended for excellence.',
+          rating: 5 
+        }
+      ]
     }
-  ];
+  };
+
+  const content = translations[lang];
 
   return (
     <div className="max-w-7xl mx-auto">
       <div className="text-center mb-24">
-        <span className="text-[#c5a059] font-black text-xs tracking-widest mb-4 block">شركاء النجاح</span>
-        <h2 className="text-5xl font-black text-white">آراء أعتز بها</h2>
+        <MotionSpan 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          className="text-[#c5a059] font-black text-xs tracking-widest mb-4 block"
+        >
+          {content.tag}
+        </MotionSpan>
+        <MotionH2 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          className="text-5xl font-black text-white"
+        >
+          {content.title}
+        </MotionH2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-        {reviews.map((review, index) => (
-          <motion.div 
+        {content.reviews.map((review, index) => (
+          <MotionDiv 
             key={index}
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ delay: index * 0.1 }}
             whileHover={{ scale: 1.05 }}
             className="bg-[#1a0101] p-12 rounded-[50px] border border-[#c5a059]/20 catchy-shadow relative group overflow-hidden"
           >
@@ -54,7 +111,7 @@ const ReviewsSection: React.FC = () => {
                 <p className="text-[10px] text-[#c5a059] font-black uppercase tracking-[0.2em]">{review.location}</p>
               </div>
             </div>
-          </motion.div>
+          </MotionDiv>
         ))}
       </div>
     </div>
