@@ -1,15 +1,142 @@
-import React,{useEffect,useState}from'react';
-const EVENT=new Date('2026-12-18T19:30:00+04:00').getTime();
-const Floral=({flip=false}:{flip?:boolean})=><svg viewBox="0 0 180 300" className={`absolute ${flip?'right-0 scale-x-[-1]':'left-0'} bottom-0 w-[48%] h-[70%] opacity-80`}><g fill="none" stroke="#c49a53" strokeWidth="1.3"><path d="M15 290C45 220 32 145 120 50"/><path d="M37 220c45-12 65-42 76-82M45 250c34-4 55-21 75-55"/></g><g fill="#7c1724" stroke="#c49a53" strokeWidth="1"><circle cx="112" cy="68" r="34"/><circle cx="72" cy="145" r="28"/><circle cx="42" cy="220" r="22"/></g><g fill="none" stroke="#d7b66f"><path d="M88 45c22 20 43 21 54 0-6 30-26 43-54 0Z"/><path d="M48 126c20 18 40 18 52 0-8 28-28 36-52 0Z"/></g></svg>;
-const Frame=()=> <><div className="absolute inset-3 rounded-[28px] border border-[#cda65e]/50 pointer-events-none"/><div className="absolute inset-6 rounded-[22px] border border-[#cda65e]/20 pointer-events-none"/><span className="absolute top-5 left-1/2 -translate-x-1/2 text-[#d4af67]">✦</span></>;
-export default function WeddingInviteDemo(){const[phase,setPhase]=useState<'closed'|'opening'|'open'>('closed'),[rsvp,setRsvp]=useState(false),[left,setLeft]=useState({d:0,h:0,m:0,s:0});useEffect(()=>{const f=()=>{const x=Math.max(0,EVENT-Date.now());setLeft({d:Math.floor(x/864e5),h:Math.floor(x/36e5)%24,m:Math.floor(x/6e4)%60,s:Math.floor(x/1e3)%60})};f();const i=setInterval(f,1000);return()=>clearInterval(i)},[]);const reveal=()=>{setPhase('opening');setTimeout(()=>setPhase('open'),1450)};
-return <div dir="rtl" className="min-h-screen overflow-x-hidden bg-[#260509] text-[#f7ead5]" style={{fontFamily:'Georgia,serif'}}>
-{phase!=='open'&&<div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden" style={{perspective:'1300px',background:'radial-gradient(circle at 50% 35%,#8b2330,#30070c 62%,#170204)'}}><div className="absolute inset-0 opacity-20" style={{backgroundImage:'radial-gradient(#d5ae67 0.7px,transparent .8px)',backgroundSize:'18px 18px'}}/><div className="relative w-[92vw] max-w-[420px] h-[82vh] max-h-[760px] shadow-[0_40px_100px_#000b]" onClick={phase==='closed'?reveal:undefined}>
-<div className="absolute inset-0 rounded-[30px] bg-[#efe1cc] border border-[#cda65e]/40 flex items-center justify-center text-center overflow-hidden"><div className={`transition-all duration-1000 ${phase==='opening'?'opacity-100 scale-100':'opacity-0 scale-95'}`}><div className="text-[#9d763a] text-xs tracking-[.3em] mb-7">TOGETHER WITH THEIR FAMILIES</div><div className="text-[#551019] text-5xl leading-tight">مريم<div className="text-[#b18443] text-2xl my-2">&</div>سيف</div><div className="w-20 h-px bg-[#b18443] mx-auto my-8"/><div className="text-[#551019] text-sm">18 • 12 • 2026</div><div className="text-[#9d763a] text-[10px] tracking-[.25em] mt-3">MUSCAT • OMAN</div></div></div>
-<div className={`absolute left-0 top-0 w-1/2 h-full origin-left transition-transform duration-[1400ms] ease-in-out rounded-l-[30px] overflow-hidden border-y border-l border-[#d2ad68]/45 ${phase==='opening'?'[-webkit-transform:rotateY(-112deg)] [transform:rotateY(-112deg)]':'[transform:rotateY(0deg)]'}`} style={{transformStyle:'preserve-3d',background:'linear-gradient(105deg,#3c0810,#781925 58%,#4b0b14)'}}><Frame/><Floral/></div>
-<div className={`absolute right-0 top-0 w-1/2 h-full origin-right transition-transform duration-[1400ms] ease-in-out rounded-r-[30px] overflow-hidden border-y border-r border-[#d2ad68]/45 ${phase==='opening'?'[transform:rotateY(112deg)]':'[transform:rotateY(0deg)]'}`} style={{transformStyle:'preserve-3d',background:'linear-gradient(255deg,#3c0810,#781925 58%,#4b0b14)'}}><Frame/><Floral flip/></div>
-<button onClick={e=>{e.stopPropagation();if(phase==='closed')reveal()}} className={`absolute z-20 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-full border-[3px] border-[#efd38e] bg-[radial-gradient(circle_at_35%_30%,#e4c77f,#a4752d_58%,#674214)] shadow-[0_0_0_9px_#3a0810,0_16px_35px_#0009] text-[#421018] text-3xl transition-all duration-500 ${phase==='opening'?'opacity-0 scale-75':'opacity-100'}`}><span className="font-serif">M</span><span className="text-xs mx-1">✦</span><span>S</span></button>
-<div className={`absolute bottom-10 inset-x-0 z-20 text-center transition-opacity ${phase==='opening'?'opacity-0':'opacity-100'}`}><div className="text-[#f0d9aa] text-sm">اضغطي على الختم لفتح الدعوة</div><div className="text-[#d4af67]/60 text-[9px] tracking-[.35em] mt-2">TAP TO OPEN</div></div></div></div>}
-<section className="relative min-h-screen flex items-center justify-center px-6 py-24 bg-[#efe1cc] text-[#511018] overflow-hidden"><Frame/><div className="absolute -top-10 -left-12 w-48 h-48 rounded-full bg-[#6f1420]/10 blur-2xl"/><Floral/><Floral flip/><div className="relative z-10 max-w-lg text-center bg-[#f7eddf]/80 backdrop-blur-sm px-7 py-14 border border-[#b98b46]/30 shadow-[0_25px_80px_#4b0c1420]"><div className="text-[#9d763a] text-[10px] tracking-[.35em]">TOGETHER WITH THEIR FAMILIES</div><div className="text-[#b18443] text-xl my-6">❦</div><p className="text-sm opacity-70">نتشرف بدعوتكم لمشاركتنا بداية حكايتنا</p><h1 className="text-6xl md:text-8xl my-7 leading-[1.05]">مريم <span className="block text-[#b18443] text-3xl my-3">&</span> سيف</h1><div className="flex justify-center items-center gap-4"><span className="w-12 h-px bg-[#b18443]"/><span className="text-sm">الجمعة 18 ديسمبر 2026</span><span className="w-12 h-px bg-[#b18443]"/></div><div className="text-[10px] tracking-[.25em] text-[#9d763a] mt-4">MUSCAT • OMAN</div><div className="mt-10 animate-bounce text-[#9d763a]">⌄</div></div></section>
-<section className="relative min-h-[90vh] flex items-center justify-center px-5 py-24 bg-[radial-gradient(circle_at_top,#741724,#31070c_65%)]"><Frame/><div className="max-w-lg w-full text-center"><div className="text-[#d4af67] text-[10px] tracking-[.4em]">COUNTING DOWN</div><h2 className="text-4xl mt-5">إلى ليلتنا المنتظرة</h2><div className="grid grid-cols-4 gap-2 mt-10">{[['يوم',left.d],['ساعة',left.h],['دقيقة',left.m],['ثانية',left.s]].map(([l,v])=><div key={String(l)} className="border border-[#d4af67]/35 rounded-t-[40px] py-6 bg-[#1f0307]/30"><div className="text-3xl text-[#f5dfb7]">{v}</div><div className="text-[9px] text-[#d4af67] mt-2">{l}</div></div>)}</div><div className="mt-14 border border-[#d4af67]/35 p-2"><div className="border border-[#d4af67]/15 py-9 px-5"><div className="text-[#d4af67]">✦</div><h3 className="text-3xl mt-4">قصر البستان</h3><p className="text-sm opacity-65 mt-3">الاستقبال 7:30 مساءً • الحفل 8:00 مساءً</p><a href="https://maps.google.com/?q=Al+Bustan+Palace+Muscat" target="_blank" rel="noreferrer" className="inline-block mt-7 px-8 py-3 bg-[#e9d8bd] text-[#531019] text-sm">عرض الموقع</a></div></div></div></section>
-<section className="py-24 px-6 bg-[#efe1cc] text-[#511018] text-center"><div className="max-w-md mx-auto"><div className="text-[#a47b3c]">❦</div><h2 className="text-4xl mt-5">تأكيد الحضور</h2><p className="text-sm opacity-65 mt-4">وجودكم هو أجمل هدية</p>{!rsvp?<button onClick={()=>setRsvp(true)} className="mt-8 bg-[#65131e] text-[#f3dfbd] px-10 py-4">سأشارككم الفرحة</button>:<div className="mt-8 border border-[#b18443]/40 p-7">تم تأكيد حضوركم ♡</div>}</div></section></div>}
+import React, { useState } from 'react';
+
+const A = '/wedding-assets/';
+
+type Phase = 'closed' | 'opening' | 'open';
+
+export default function WeddingInviteDemo() {
+  const [phase, setPhase] = useState<Phase>('closed');
+
+  const reveal = () => {
+    if (phase !== 'closed') return;
+    setPhase('opening');
+    window.setTimeout(() => setPhase('open'), 1350);
+  };
+
+  const opening = phase === 'opening';
+  const opened = phase === 'open';
+
+  return (
+    <main
+      className="fixed inset-0 overflow-hidden bg-[#210307]"
+      style={{
+        perspective: '1500px',
+        background:
+          'radial-gradient(circle at 50% 35%, rgba(118,24,37,.72), rgba(35,3,8,1) 72%)',
+      }}
+    >
+      <div className="absolute inset-0 flex items-center justify-center p-3 sm:p-6">
+        <div
+          className="relative h-full w-full max-w-[470px] overflow-visible"
+          style={{ maxHeight: '920px' }}
+        >
+          {/* Real artwork revealed behind the doors */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <img
+              src={`${A}open.webp`}
+              alt="Open wedding invitation"
+              className="h-full w-full object-contain transition-all duration-700"
+              style={{
+                opacity: phase === 'closed' ? 0 : opened ? 0.18 : 1,
+                transform: phase === 'closed' ? 'scale(.96)' : 'scale(1)',
+                filter: 'drop-shadow(0 25px 45px rgba(0,0,0,.42))',
+              }}
+            />
+          </div>
+
+          {/* Final invitation card artwork */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <img
+              src={`${A}card.webp`}
+              alt="Wedding invitation card"
+              className="h-full w-full object-contain transition-all duration-700"
+              style={{
+                opacity: opened ? 1 : 0,
+                transform: opened ? 'scale(1)' : 'scale(.94)',
+                filter: 'drop-shadow(0 28px 48px rgba(0,0,0,.38))',
+              }}
+            />
+          </div>
+
+          {/* LEFT HALF OF THE REAL CLOSED ARTWORK */}
+          <div
+            className="absolute left-0 top-0 h-full w-1/2 overflow-hidden"
+            style={{
+              transformOrigin: 'left center',
+              transformStyle: 'preserve-3d',
+              transform: opening || opened ? 'rotateY(-108deg)' : 'rotateY(0deg)',
+              transition: 'transform 1.25s cubic-bezier(.65,.05,.22,1)',
+              zIndex: 20,
+            }}
+          >
+            <img
+              src={`${A}closed.webp`}
+              alt=""
+              draggable={false}
+              className="absolute left-0 top-0 h-full max-w-none object-contain select-none"
+              style={{ width: '200%' }}
+            />
+          </div>
+
+          {/* RIGHT HALF OF THE REAL CLOSED ARTWORK */}
+          <div
+            className="absolute right-0 top-0 h-full w-1/2 overflow-hidden"
+            style={{
+              transformOrigin: 'right center',
+              transformStyle: 'preserve-3d',
+              transform: opening || opened ? 'rotateY(108deg)' : 'rotateY(0deg)',
+              transition: 'transform 1.25s cubic-bezier(.65,.05,.22,1)',
+              zIndex: 20,
+            }}
+          >
+            <img
+              src={`${A}closed.webp`}
+              alt=""
+              draggable={false}
+              className="absolute right-0 top-0 h-full max-w-none object-contain select-none"
+              style={{ width: '200%' }}
+            />
+          </div>
+
+          {/* Real wax seal is the interaction */}
+          <button
+            type="button"
+            onClick={reveal}
+            aria-label="Open wedding invitation"
+            className="absolute left-1/2 top-1/2 z-30 -translate-x-1/2 -translate-y-1/2 border-0 bg-transparent p-0 outline-none"
+            style={{
+              width: 'clamp(84px, 25vw, 118px)',
+              opacity: phase === 'closed' ? 1 : 0,
+              transform:
+                phase === 'closed'
+                  ? 'translate(-50%,-50%) scale(1)'
+                  : 'translate(-50%,-50%) scale(.72)',
+              transition: 'opacity .35s ease, transform .45s ease',
+              filter: 'drop-shadow(0 12px 16px rgba(0,0,0,.5))',
+              cursor: phase === 'closed' ? 'pointer' : 'default',
+            }}
+          >
+            <img
+              src={`${A}seal.webp`}
+              alt="M S wax seal"
+              className="block h-auto w-full"
+              draggable={false}
+            />
+          </button>
+
+          <div
+            dir="rtl"
+            className="absolute bottom-[5%] left-0 right-0 z-30 text-center text-[12px] tracking-wide text-[#f3dfb9]"
+            style={{
+              opacity: phase === 'closed' ? 0.94 : 0,
+              transition: 'opacity .3s ease',
+              textShadow: '0 2px 10px rgba(0,0,0,.75)',
+            }}
+          >
+            اضغطي على الختم لفتح الدعوة
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
