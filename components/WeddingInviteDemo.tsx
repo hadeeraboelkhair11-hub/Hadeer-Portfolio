@@ -9,7 +9,7 @@ export default function WeddingInviteDemo(){
         <img src="/wedding-assets/door-left.webp" alt="Left invitation door" className="w-full h-full object-cover"/>
       </div>
       <div className={`absolute inset-y-0 right-0 w-1/2 origin-right transition-transform duration-[1400ms] ease-[cubic-bezier(.22,.8,.22,1)] z-20 ${open?'[transform:rotateY(115deg)]':'[transform:rotateY(0deg)]'}`} style={{transformStyle:'preserve-3d'}}>
-        <img src="/wedding-assets/door-left.webp" alt="Right invitation door" className="w-full h-full object-cover scale-x-[-1]"/>
+        <img src="/wedding-assets/door-right.webp" alt="Right invitation door" className="w-full h-full object-cover"/>
       </div>
       <button onClick={()=>setOpen(true)} className={`absolute left-1/2 top-1/2 z-30 -translate-x-1/2 -translate-y-1/2 transition-all duration-500 ${open?'opacity-0 scale-75 pointer-events-none':'opacity-100 scale-100'}`} aria-label="Open invitation">
         <img src="/wedding-assets/seal.webp" alt="M S seal" className="w-28 h-28 object-contain drop-shadow-[0_10px_18px_rgba(0,0,0,.45)]"/>
