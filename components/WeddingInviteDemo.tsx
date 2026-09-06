@@ -39,7 +39,7 @@ export default function WeddingInviteDemo() {
           inset: 1.3%;
           width: 97.4%;
           height: 97.4%;
-          object-fit: fill;
+          object-fit: contain;
           background: #f5ead8;
           box-shadow: 0 0 32px rgba(232, 190, 112, .16);
           opacity: .86;
@@ -62,8 +62,8 @@ export default function WeddingInviteDemo() {
           transform-style: preserve-3d;
           transition: transform 1550ms cubic-bezier(.18,.78,.2,1), filter 1200ms ease;
           will-change: transform;
-          backface-visibility: hidden;
-          -webkit-backface-visibility: hidden;
+          backface-visibility: visible;
+          -webkit-backface-visibility: visible;
         }
 
         .door-left {
@@ -93,13 +93,13 @@ export default function WeddingInviteDemo() {
         .door-right img { right: 0; }
 
         .invitation-stage.is-open .door-left {
-          transform: rotateY(-108deg);
-          filter: brightness(.66);
+          transform: rotateY(-84deg);
+          filter: brightness(.58) drop-shadow(8px 0 10px rgba(0,0,0,.28));
         }
 
         .invitation-stage.is-open .door-right {
-          transform: rotateY(108deg);
-          filter: brightness(.66);
+          transform: rotateY(84deg);
+          filter: brightness(.58) drop-shadow(-8px 0 10px rgba(0,0,0,.28));
         }
 
         .seal-trigger {
@@ -181,7 +181,7 @@ export default function WeddingInviteDemo() {
       >
         <img
           className="inner-card"
-          src="/wedding-assets/invitation-card.png"
+          src="/wedding-assets/card.webp"
           alt="Maryam and Saif wedding invitation"
         />
 
@@ -199,7 +199,7 @@ export default function WeddingInviteDemo() {
           aria-label="فتح الدعوة"
           aria-expanded={isOpen}
         >
-          <img src="/wedding-assets/wax-seal.png" alt="" draggable={false} />
+          <img src="/wedding-assets/seal.webp" alt="" draggable={false} />
         </button>
 
         <p className="opening-hint">اضغطي على الختم لفتح الدعوة</p>
