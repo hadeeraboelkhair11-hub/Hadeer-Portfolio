@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { MapPin, Navigation } from 'lucide-react';
+import React, { FormEvent, useEffect, useState } from 'react';
+import { Camera, Check, Heart, MapPin, Music2, Navigation, Share2, VolumeX } from 'lucide-react';
 
 const cover = '/wedding-assets/opening-cover.png';
 const weddingDate = new Date('2026-10-05T19:00:00+04:00').getTime();
@@ -20,6 +20,9 @@ export default function WeddingInviteDemo() {
   const [isOpen, setIsOpen] = useState(false);
   const [showCountdown, setShowCountdown] = useState(false);
   const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft);
+  const [rsvpSent, setRsvpSent] = useState(false);
+  const [guestName, setGuestName] = useState('');
+  const [musicEnabled, setMusicEnabled] = useState(false);
 
   useEffect(() => {
     const interval = window.setInterval(() => setTimeLeft(calculateTimeLeft()), 1000);
@@ -38,6 +41,20 @@ export default function WeddingInviteDemo() {
 
   const goToCountdown = () => {
     document.getElementById('wedding-countdown')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const submitRsvp = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setRsvpSent(true);
+  };
+
+  const shareInvitation = async () => {
+    const data = { title: 'Maryam & Saif', text: 'Join us to celebrate our wedding day.', url: window.location.href };
+    if (navigator.share) {
+      await navigator.share(data).catch(() => undefined);
+      return;
+    }
+    await navigator.clipboard?.writeText(window.location.href);
   };
 
   return (
@@ -443,6 +460,183 @@ export default function WeddingInviteDemo() {
           .venue-map-wrap { min-height: 300px; }
         }
 
+        .gallery-section {
+          padding: 88px 18px 96px;
+          color: #f2dcae;
+          background: radial-gradient(circle at 20% 10%, rgba(133, 17, 39, .5), transparent 30%), #26040b;
+          text-align: center;
+        }
+
+        .gallery-shell, .rsvp-shell {
+          width: min(100%, 760px);
+          margin: 0 auto;
+        }
+
+        .section-icon {
+          margin: 0 auto 14px;
+          color: #c99a50;
+        }
+
+        .section-kicker {
+          margin: 0 0 10px;
+          color: #c99a50;
+          font: 600 11px/1.5 Cairo, sans-serif;
+          letter-spacing: .2em;
+        }
+
+        .section-title {
+          margin: 0;
+          font: 400 clamp(30px, 7vw, 47px)/1.25 Georgia, serif;
+        }
+
+        .gallery-copy {
+          max-width: 470px;
+          margin: 14px auto 30px;
+          color: rgba(241, 220, 180, .68);
+          font: 400 14px/1.8 Georgia, serif;
+        }
+
+        .gallery-art {
+          padding: 7px;
+          border: 1px solid rgba(202, 155, 79, .58);
+          background: #f8efe2;
+          box-shadow: 0 28px 64px rgba(0, 0, 0, .42);
+        }
+
+        .gallery-art img { display: block; width: 100%; height: auto; }
+
+        .rsvp-section {
+          padding: 90px 18px 102px;
+          color: #641222;
+          background: linear-gradient(180deg, #fffaf3, #f3e4ce);
+          text-align: center;
+        }
+
+        .rsvp-section .section-icon, .rsvp-section .section-kicker { color: #aa742c; }
+
+        .rsvp-copy {
+          max-width: 500px;
+          margin: 14px auto 30px;
+          color: #7d6266;
+          font: 400 14px/1.8 Georgia, serif;
+        }
+
+        .rsvp-card {
+          width: min(100%, 520px);
+          margin: 0 auto;
+          padding: 30px 24px;
+          border: 1px solid rgba(178, 126, 54, .52);
+          background: rgba(255, 253, 248, .84);
+          box-shadow: 0 20px 48px rgba(84, 15, 29, .12);
+        }
+
+        .rsvp-form { display: grid; gap: 15px; text-align: left; }
+        .rsvp-form label { display: grid; gap: 7px; color: #9b6c34; font-size: 10px; font-weight: 600; letter-spacing: .1em; }
+        .rsvp-form input, .rsvp-form select {
+          width: 100%;
+          min-height: 50px;
+          padding: 11px 13px;
+          border: 1px solid #d6bb91;
+          border-radius: 2px;
+          outline: none;
+          color: #57101d;
+          background: #fffefa;
+          font: 400 14px Cairo, sans-serif;
+        }
+        .rsvp-form input:focus, .rsvp-form select:focus { border-color: #8d3041; box-shadow: 0 0 0 3px rgba(109, 15, 33, .08); }
+        .rsvp-submit {
+          min-height: 52px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 9px;
+          margin-top: 5px;
+          border: 1px solid #8c3141;
+          border-radius: 2px;
+          color: #f5dfb6;
+          background: linear-gradient(135deg, #76152a, #520914);
+          font: 600 11px Cairo, sans-serif;
+          letter-spacing: .12em;
+          cursor: pointer;
+        }
+
+        .rsvp-success { padding: 18px 5px; }
+        .rsvp-success-badge { width: 62px; height: 62px; display: grid; place-items: center; margin: 0 auto 18px; border-radius: 50%; color: #f5dfb6; background: #6a1022; }
+        .rsvp-success h3 { margin: 0 0 9px; font: 400 30px/1.3 Georgia, serif; }
+        .rsvp-success p { margin: 0; color: #7d6266; }
+
+        .finale-section {
+          position: relative;
+          min-height: 72vh;
+          display: grid;
+          place-items: center;
+          overflow: hidden;
+          padding: 82px 18px;
+          color: #f1d9aa;
+          background: radial-gradient(circle at 50% 24%, #77162b 0%, #390710 48%, #170205 100%);
+          text-align: center;
+        }
+
+        .finale-content { width: min(100%, 560px); }
+        .finale-content > img { width: 96px; height: 102px; object-fit: contain; filter: drop-shadow(0 10px 18px rgba(0,0,0,.4)); }
+        .finale-copy { margin: 22px 0 12px; color: #d4b474; font-size: 10px; font-weight: 600; letter-spacing: .19em; }
+        .finale-title { margin: 0; font: 400 clamp(40px, 11vw, 64px)/1.15 Georgia, serif; }
+        .finale-title span { display: block; color: #d0a052; font-size: .62em; font-style: italic; }
+        .finale-date { margin: 23px 0 27px; color: #d4b474; font-size: 11px; letter-spacing: .22em; }
+        .finale-actions { display: flex; justify-content: center; gap: 10px; }
+        .finale-action {
+          min-width: 124px;
+          min-height: 48px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          border: 1px solid rgba(211, 171, 99, .58);
+          border-radius: 2px;
+          color: #f1d9aa;
+          background: rgba(73, 7, 20, .7);
+          font: 600 10px Cairo, sans-serif;
+          letter-spacing: .1em;
+          cursor: pointer;
+        }
+
+        .music-control {
+          position: fixed;
+          right: 16px;
+          bottom: 16px;
+          z-index: 20;
+          width: 48px;
+          height: 48px;
+          display: grid;
+          place-items: center;
+          border: 1px solid rgba(221, 183, 112, .7);
+          border-radius: 50%;
+          color: #f0d39a;
+          background: rgba(64, 5, 17, .9);
+          box-shadow: 0 8px 24px rgba(0,0,0,.3);
+          backdrop-filter: blur(8px);
+          cursor: pointer;
+        }
+
+        .music-control.on { animation: music-glow 1.8s ease-in-out infinite; }
+
+        @media (max-width: 520px) {
+          .countdown-section { min-height: 70vh; padding: 62px 12px 72px; }
+          .countdown-panel { padding: 32px 12px 25px; }
+          .countdown-grid { gap: 6px; }
+          .countdown-unit { padding: 19px 2px 15px; }
+          .countdown-label { letter-spacing: .04em; }
+          .gallery-section, .rsvp-section { padding: 72px 16px 80px; }
+          .rsvp-card { padding: 25px 18px; }
+          .finale-actions { flex-direction: column; }
+          .finale-action { width: min(100%, 250px); margin: 0 auto; }
+        }
+
+        @keyframes music-glow {
+          0%, 100% { box-shadow: 0 8px 24px rgba(0,0,0,.3), 0 0 0 0 rgba(211,169,91,.24); }
+          50% { box-shadow: 0 8px 24px rgba(0,0,0,.3), 0 0 0 8px rgba(211,169,91,0); }
+        }
+
         @keyframes seal-pulse {
           0%, 100% { transform: scale(.94); opacity: .35; }
           50% { transform: scale(1.12); opacity: .82; }
@@ -555,6 +749,32 @@ export default function WeddingInviteDemo() {
           </div>
         </div>
       </section>
-    </main>
-  );
-}
+
+      <section className="gallery-section" aria-labelledby="gallery-title">
+        <div className="gallery-shell">
+          <Camera className="section-icon" size={25} strokeWidth={1.5} />
+          <p className="section-kicker">OUR DAY</p>
+          <h2 id="gallery-title" className="section-title">A glimpse of the celebration</h2>
+          <p className="gallery-copy">A timeless evening filled with warm candlelight, burgundy blooms and the people we love.</p>
+          <div className="gallery-art">
+            <img src="/wedding-assets/arch-gallery.png" alt="Wedding venue, burgundy flowers and candlelit reception" />
+          </div>
+        </div>
+      </section>
+
+      <section className="rsvp-section" aria-labelledby="rsvp-title">
+        <div className="rsvp-shell">
+          <Heart className="section-icon" size={27} strokeWidth={1.5} />
+          <p className="section-kicker">KINDLY REPLY</p>
+          <h2 id="rsvp-title" className="section-title">Will you celebrate with us?</h2>
+          <p className="rsvp-copy">Please send your response before September 15, 2026. We would be delighted to share our day with you.</p>
+
+          <div className="rsvp-card">
+            {rsvpSent ? (
+              <div className="rsvp-success">
+                <div className="rsvp-success-badge"><Check size={28} /></div>
+                <h3>Thank you, {guestName}</h3>
+                <p>Your response has been received.</p>
+              </div>
+            ) : (
+              <form className="rsvp-form" onSubmit={submitRsvp}>
