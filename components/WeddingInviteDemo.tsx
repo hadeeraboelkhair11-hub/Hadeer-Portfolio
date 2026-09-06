@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { MapPin, Navigation } from 'lucide-react';
 
 const cover = '/wedding-assets/opening-cover.png';
 const weddingDate = new Date('2026-10-05T19:00:00+04:00').getTime();
@@ -321,6 +322,127 @@ export default function WeddingInviteDemo() {
           letter-spacing: .19em;
         }
 
+        .venue-section {
+          min-height: 92vh;
+          display: grid;
+          place-items: center;
+          padding: 84px 18px 96px;
+          color: #5c1421;
+          background:
+            radial-gradient(circle at 85% 10%, rgba(173, 21, 47, .08), transparent 30%),
+            linear-gradient(180deg, #f8efe1 0%, #fffaf3 56%, #f4e7d4 100%);
+          box-sizing: border-box;
+        }
+
+        .venue-shell {
+          width: min(100%, 760px);
+          text-align: center;
+        }
+
+        .venue-pin {
+          width: 50px;
+          height: 50px;
+          display: grid;
+          place-items: center;
+          margin: 0 auto 17px;
+          border: 1px solid rgba(178, 126, 54, .55);
+          border-radius: 50%;
+          color: #a86e25;
+          background: rgba(255, 252, 246, .8);
+        }
+
+        .venue-kicker {
+          margin: 0 0 9px;
+          color: #ad7b36;
+          font: 600 11px/1.5 Cairo, sans-serif;
+          letter-spacing: .2em;
+        }
+
+        .venue-title {
+          margin: 0;
+          color: #6c1022;
+          font: 400 clamp(30px, 7vw, 48px)/1.25 Georgia, serif;
+          letter-spacing: .05em;
+        }
+
+        .venue-place {
+          margin: 10px 0 30px;
+          color: #8c6b62;
+          font: 500 12px/1.5 Cairo, sans-serif;
+          letter-spacing: .15em;
+        }
+
+        .venue-layout {
+          display: grid;
+          grid-template-columns: 1.04fr .96fr;
+          overflow: hidden;
+          border: 1px solid rgba(178, 126, 54, .55);
+          background: #fff;
+          box-shadow: 0 24px 58px rgba(84, 15, 29, .17);
+          text-align: left;
+        }
+
+        .venue-art {
+          min-height: 310px;
+          display: grid;
+          place-items: center;
+          overflow: hidden;
+          background: #f4e9d9;
+        }
+
+        .venue-art img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transform: scale(1.04);
+        }
+
+        .venue-map-wrap {
+          min-height: 310px;
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          padding: 10px;
+          background: #f8efe3;
+        }
+
+        .venue-map {
+          width: 100%;
+          flex: 1;
+          min-height: 230px;
+          border: 0;
+          filter: sepia(.28) saturate(.74) contrast(.96);
+        }
+
+        .venue-directions {
+          min-height: 52px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 9px;
+          margin-top: 9px;
+          border: 1px solid #8f3546;
+          border-radius: 2px;
+          color: #f5dfb6;
+          background: linear-gradient(135deg, #76152a, #530914);
+          font: 600 11px/1 Cairo, sans-serif;
+          letter-spacing: .11em;
+          text-decoration: none;
+          box-shadow: 0 8px 18px rgba(77, 5, 18, .2);
+          transition: transform 180ms ease, box-shadow 180ms ease;
+        }
+
+        .venue-directions:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 11px 24px rgba(77, 5, 18, .27);
+        }
+
+        @media (max-width: 620px) {
+          .venue-layout { grid-template-columns: 1fr; }
+          .venue-art { min-height: 230px; }
+          .venue-map-wrap { min-height: 300px; }
+        }
+
         @keyframes seal-pulse {
           0%, 100% { transform: scale(.94); opacity: .35; }
           50% { transform: scale(1.12); opacity: .82; }
@@ -398,6 +520,39 @@ export default function WeddingInviteDemo() {
             ))}
           </div>
           <p className="countdown-date">05 · OCTOBER · 2026</p>
+        </div>
+      </section>
+
+      <section className="venue-section" aria-labelledby="venue-title">
+        <div className="venue-shell">
+          <div className="venue-pin" aria-hidden="true"><MapPin size={23} strokeWidth={1.6} /></div>
+          <p className="venue-kicker">THE VENUE</p>
+          <h2 id="venue-title" className="venue-title">GRAND HYATT MUSCAT</h2>
+          <p className="venue-place">MUSCAT · OMAN</p>
+
+          <div className="venue-layout">
+            <div className="venue-art">
+              <img src="/wedding-assets/location-card.png" alt="Grand Hyatt Muscat wedding venue" />
+            </div>
+            <div className="venue-map-wrap">
+              <iframe
+                className="venue-map"
+                title="Grand Hyatt Muscat map"
+                src="https://www.google.com/maps?q=Grand%20Hyatt%20Muscat%2C%20Muscat%2C%20Oman&output=embed"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+              <a
+                className="venue-directions"
+                href="https://www.google.com/maps/search/?api=1&query=Grand+Hyatt+Muscat%2C+Muscat%2C+Oman"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Navigation size={17} strokeWidth={1.7} />
+                GET DIRECTIONS
+              </a>
+            </div>
+          </div>
         </div>
       </section>
     </main>
