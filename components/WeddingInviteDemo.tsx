@@ -1,142 +1,20 @@
-import React, { useState } from 'react';
+import React,{useState}from'react';
 
-const A = '/wedding-assets/';
-
-type Phase = 'closed' | 'opening' | 'open';
-
-export default function WeddingInviteDemo() {
-  const [phase, setPhase] = useState<Phase>('closed');
-
-  const reveal = () => {
-    if (phase !== 'closed') return;
-    setPhase('opening');
-    window.setTimeout(() => setPhase('open'), 1350);
-  };
-
-  const opening = phase === 'opening';
-  const opened = phase === 'open';
-
-  return (
-    <main
-      className="fixed inset-0 overflow-hidden bg-[#210307]"
-      style={{
-        perspective: '1500px',
-        background:
-          'radial-gradient(circle at 50% 35%, rgba(118,24,37,.72), rgba(35,3,8,1) 72%)',
-      }}
-    >
-      <div className="absolute inset-0 flex items-center justify-center p-3 sm:p-6">
-        <div
-          className="relative h-full w-full max-w-[470px] overflow-visible"
-          style={{ maxHeight: '920px' }}
-        >
-          {/* Real artwork revealed behind the doors */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <img
-              src={`${A}open.webp`}
-              alt="Open wedding invitation"
-              className="h-full w-full object-contain transition-all duration-700"
-              style={{
-                opacity: phase === 'closed' ? 0 : opened ? 0.18 : 1,
-                transform: phase === 'closed' ? 'scale(.96)' : 'scale(1)',
-                filter: 'drop-shadow(0 25px 45px rgba(0,0,0,.42))',
-              }}
-            />
-          </div>
-
-          {/* Final invitation card artwork */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <img
-              src={`${A}card.webp`}
-              alt="Wedding invitation card"
-              className="h-full w-full object-contain transition-all duration-700"
-              style={{
-                opacity: opened ? 1 : 0,
-                transform: opened ? 'scale(1)' : 'scale(.94)',
-                filter: 'drop-shadow(0 28px 48px rgba(0,0,0,.38))',
-              }}
-            />
-          </div>
-
-          {/* LEFT HALF OF THE REAL CLOSED ARTWORK */}
-          <div
-            className="absolute left-0 top-0 h-full w-1/2 overflow-hidden"
-            style={{
-              transformOrigin: 'left center',
-              transformStyle: 'preserve-3d',
-              transform: opening || opened ? 'rotateY(-108deg)' : 'rotateY(0deg)',
-              transition: 'transform 1.25s cubic-bezier(.65,.05,.22,1)',
-              zIndex: 20,
-            }}
-          >
-            <img
-              src={`${A}closed.webp`}
-              alt=""
-              draggable={false}
-              className="absolute left-0 top-0 h-full max-w-none object-contain select-none"
-              style={{ width: '200%' }}
-            />
-          </div>
-
-          {/* RIGHT HALF OF THE REAL CLOSED ARTWORK */}
-          <div
-            className="absolute right-0 top-0 h-full w-1/2 overflow-hidden"
-            style={{
-              transformOrigin: 'right center',
-              transformStyle: 'preserve-3d',
-              transform: opening || opened ? 'rotateY(108deg)' : 'rotateY(0deg)',
-              transition: 'transform 1.25s cubic-bezier(.65,.05,.22,1)',
-              zIndex: 20,
-            }}
-          >
-            <img
-              src={`${A}closed.webp`}
-              alt=""
-              draggable={false}
-              className="absolute right-0 top-0 h-full max-w-none object-contain select-none"
-              style={{ width: '200%' }}
-            />
-          </div>
-
-          {/* Real wax seal is the interaction */}
-          <button
-            type="button"
-            onClick={reveal}
-            aria-label="Open wedding invitation"
-            className="absolute left-1/2 top-1/2 z-30 -translate-x-1/2 -translate-y-1/2 border-0 bg-transparent p-0 outline-none"
-            style={{
-              width: 'clamp(84px, 25vw, 118px)',
-              opacity: phase === 'closed' ? 1 : 0,
-              transform:
-                phase === 'closed'
-                  ? 'translate(-50%,-50%) scale(1)'
-                  : 'translate(-50%,-50%) scale(.72)',
-              transition: 'opacity .35s ease, transform .45s ease',
-              filter: 'drop-shadow(0 12px 16px rgba(0,0,0,.5))',
-              cursor: phase === 'closed' ? 'pointer' : 'default',
-            }}
-          >
-            <img
-              src={`${A}seal.webp`}
-              alt="M S wax seal"
-              className="block h-auto w-full"
-              draggable={false}
-            />
-          </button>
-
-          <div
-            dir="rtl"
-            className="absolute bottom-[5%] left-0 right-0 z-30 text-center text-[12px] tracking-wide text-[#f3dfb9]"
-            style={{
-              opacity: phase === 'closed' ? 0.94 : 0,
-              transition: 'opacity .3s ease',
-              textShadow: '0 2px 10px rgba(0,0,0,.75)',
-            }}
-          >
-            اضغطي على الختم لفتح الدعوة
-          </div>
-        </div>
+export default function WeddingInviteDemo(){
+  const[open,setOpen]=useState(false);
+  return <div className="min-h-screen bg-[#190407] overflow-hidden flex items-center justify-center" style={{perspective:'1600px'}}>
+    <div className="relative w-[92vw] max-w-[420px] h-[82vh] max-h-[760px] bg-[#efe2ce] shadow-[0_30px_100px_rgba(0,0,0,.65)] overflow-hidden">
+      <img src="/wedding-assets/card.webp" alt="Invitation" className="absolute inset-0 w-full h-full object-cover"/>
+      <div className={`absolute inset-y-0 left-0 w-1/2 origin-left transition-transform duration-[1400ms] ease-[cubic-bezier(.22,.8,.22,1)] z-20 ${open?'[-webkit-transform:rotateY(-115deg)] [transform:rotateY(-115deg)]':'[transform:rotateY(0deg)]'}`} style={{transformStyle:'preserve-3d'}}>
+        <img src="/wedding-assets/door-left.webp" alt="Left invitation door" className="w-full h-full object-cover"/>
       </div>
-    </main>
-  );
+      <div className={`absolute inset-y-0 right-0 w-1/2 origin-right transition-transform duration-[1400ms] ease-[cubic-bezier(.22,.8,.22,1)] z-20 ${open?'[transform:rotateY(115deg)]':'[transform:rotateY(0deg)]'}`} style={{transformStyle:'preserve-3d'}}>
+        <img src="/wedding-assets/door-left.webp" alt="Right invitation door" className="w-full h-full object-cover scale-x-[-1]"/>
+      </div>
+      <button onClick={()=>setOpen(true)} className={`absolute left-1/2 top-1/2 z-30 -translate-x-1/2 -translate-y-1/2 transition-all duration-500 ${open?'opacity-0 scale-75 pointer-events-none':'opacity-100 scale-100'}`} aria-label="Open invitation">
+        <img src="/wedding-assets/seal.webp" alt="M S seal" className="w-28 h-28 object-contain drop-shadow-[0_10px_18px_rgba(0,0,0,.45)]"/>
+      </button>
+      {!open&&<div className="absolute bottom-8 inset-x-0 z-30 text-center text-[#f3d8a2] text-sm tracking-wide">اضغطي على الختم لفتح الدعوة</div>}
+    </div>
+  </div>
 }
