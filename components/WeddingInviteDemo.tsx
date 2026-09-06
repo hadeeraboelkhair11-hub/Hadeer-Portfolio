@@ -285,6 +285,7 @@ export default function WeddingInviteDemo() {
           display: grid;
           grid-template-columns: repeat(4, minmax(0, 1fr));
           gap: 9px;
+          direction: ltr;
         }
 
         .countdown-unit {
