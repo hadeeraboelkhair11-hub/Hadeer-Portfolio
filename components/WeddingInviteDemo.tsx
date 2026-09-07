@@ -334,50 +334,54 @@ export default function WeddingInviteDemo() {
           place-items: center;
           position: relative;
           overflow: hidden;
-          padding: 132px 20px 96px;
-          color: #f4ddb1;
+          padding: 104px 20px 92px;
+          color: #641222;
           background:
-            linear-gradient(rgba(35, 2, 8, .33), rgba(22, 1, 5, .55)),
-            url('/wedding-assets/opening-bg.webp') center / cover no-repeat;
-          border-top: 1px solid rgba(195, 144, 66, .42);
+            radial-gradient(circle at 50% 18%, rgba(255,255,255,.72), transparent 34%),
+            #fff7e9 url('/wedding-assets/invitation-paper.webp') center top / 720px auto repeat-y;
+          border-top: 1px solid rgba(174, 119, 48, .28);
           box-sizing: border-box;
         }
 
         .countdown-section::before {
           content: '';
           position: absolute;
-          top: -20px;
-          left: 50%;
-          width: min(110%, 670px);
-          height: min(52vw, 300px);
-          background: url('/wedding-assets/opening-reveal.webp') center top / contain no-repeat;
-          transform: translateX(-50%);
-          opacity: .48;
-          filter: drop-shadow(0 12px 20px rgba(0,0,0,.38));
+          top: -54px;
+          left: -78px;
+          width: min(63vw, 420px);
+          aspect-ratio: 1;
+          background: url('/wedding-assets/floral-corner-top.webp') left top / contain no-repeat;
+          opacity: .82;
+          filter: drop-shadow(0 16px 24px rgba(82, 13, 27, .16));
           pointer-events: none;
         }
 
         .countdown-section::after {
           content: '';
           position: absolute;
-          inset: 0;
-          background: radial-gradient(circle at 50% 52%, rgba(134, 25, 44, .18), transparent 42%);
+          right: -82px;
+          bottom: -82px;
+          width: min(65vw, 430px);
+          aspect-ratio: 1;
+          background: url('/wedding-assets/floral-corner-bottom.webp') right bottom / contain no-repeat;
+          opacity: .78;
+          filter: drop-shadow(0 16px 24px rgba(82, 13, 27, .16));
           pointer-events: none;
         }
 
         .countdown-panel {
           position: relative;
           z-index: 1;
-          width: min(100%, 720px);
-          padding: 48px 34px 36px;
-          border: 1px solid rgba(219, 174, 91, .76);
-          border-radius: 4px;
-          outline: 1px solid rgba(219, 174, 91, .24);
+          width: min(100%, 760px);
+          padding: 52px 30px 40px;
+          border: 1px solid rgba(169, 112, 43, .48);
+          border-radius: 2px;
+          outline: 1px solid rgba(169, 112, 43, .16);
           outline-offset: -10px;
           background:
-            radial-gradient(circle at 50% 20%, rgba(155, 31, 50, .28), transparent 46%),
-            linear-gradient(155deg, rgba(104, 10, 27, .94), rgba(45, 2, 11, .97));
-          box-shadow: 0 30px 75px rgba(0, 0, 0, .5), inset 0 0 52px rgba(255, 193, 95, .035);
+            radial-gradient(circle at 50% 15%, rgba(255,255,255,.64), transparent 48%),
+            rgba(255, 252, 245, .9);
+          box-shadow: 0 26px 65px rgba(91, 30, 37, .13), 0 0 36px rgba(218, 168, 83, .12), inset 0 0 42px rgba(174, 119, 48, .04);
           text-align: center;
           box-sizing: border-box;
         }
@@ -387,9 +391,9 @@ export default function WeddingInviteDemo() {
           content: '◆';
           position: absolute;
           top: 17px;
-          color: #d5aa62;
+          color: #b37b35;
           font-size: 10px;
-          text-shadow: 0 0 10px rgba(236, 186, 92, .35);
+          text-shadow: 0 0 10px rgba(174, 119, 48, .2);
         }
 
         .countdown-panel::before { left: 20px; }
@@ -397,14 +401,14 @@ export default function WeddingInviteDemo() {
 
         .countdown-kicker {
           margin: 0 0 12px;
-          color: #dcb874;
+          color: #a36d2c;
           font: 600 12px/1.5 Cairo, sans-serif;
           letter-spacing: .28em;
         }
 
         .countdown-title {
           margin: 0;
-          color: #f2d8a5;
+          color: #681326;
           font: 400 clamp(30px, 7vw, 46px)/1.2 Georgia, serif;
         }
 
@@ -413,7 +417,7 @@ export default function WeddingInviteDemo() {
           width: min(72%, 260px);
           height: 1px;
           margin: 24px auto 31px;
-          background: linear-gradient(90deg, transparent, #d0a55e, transparent);
+          background: linear-gradient(90deg, transparent, #b67d35, transparent);
         }
 
         .countdown-divider::after {
@@ -422,64 +426,58 @@ export default function WeddingInviteDemo() {
           left: 50%;
           top: 50%;
           padding: 0 9px;
-          color: #d8ae65;
-          background: #650a1b;
+          color: #b47a32;
+          background: #fff8ec;
           font-size: 12px;
           transform: translate(-50%, -50%);
         }
 
         .countdown-grid {
+          position: relative;
           display: grid;
           grid-template-columns: repeat(4, minmax(0, 1fr));
           align-items: stretch;
-          gap: 14px;
+          gap: 0;
+          width: 100%;
+          aspect-ratio: 1776 / 755;
+          padding: 0 1.5%;
+          background: url('/wedding-assets/countdown-frames.webp') center / 100% 100% no-repeat;
+          box-sizing: border-box;
           direction: ltr;
         }
 
         .countdown-unit {
           position: relative;
           display: flex;
-          min-height: 132px;
+          min-height: 0;
           flex-direction: column;
           align-items: center;
           justify-content: center;
           min-width: 0;
-          padding: 22px 6px 18px;
-          overflow: hidden;
-          border: 1px solid rgba(215, 165, 82, .68);
-          border-radius: 66px 66px 7px 7px;
-          background: linear-gradient(180deg, rgba(128, 15, 37, .96), rgba(67, 4, 17, .97));
-          box-shadow: inset 0 0 26px rgba(255, 200, 112, .055), 0 12px 22px rgba(20,0,4,.25);
-        }
-
-        .countdown-unit::before {
-          content: '';
-          position: absolute;
-          inset: 7px;
-          border: 1px solid rgba(228, 184, 100, .14);
-          border-radius: 58px 58px 3px 3px;
-          pointer-events: none;
+          padding: 10.5% 2px 4%;
+          border: 0;
+          background: transparent;
         }
 
         .countdown-number {
           display: block;
-          color: #f2d59c;
-          font: 400 clamp(32px, 8vw, 52px)/1 Georgia, serif;
+          color: #6b1426;
+          font: 400 clamp(28px, 7vw, 50px)/1 Georgia, serif;
           font-variant-numeric: tabular-nums;
-          text-shadow: 0 3px 14px rgba(0,0,0,.32);
+          text-shadow: 0 2px 10px rgba(108, 20, 38, .12);
         }
 
         .countdown-label {
           display: block;
-          margin-top: 11px;
-          color: #cda65f;
+          margin-top: 9px;
+          color: #9a682d;
           font: 600 clamp(8px, 2vw, 10px)/1.2 Cairo, sans-serif;
           letter-spacing: .12em;
         }
 
         .countdown-date {
           margin: 30px 0 0;
-          color: rgba(244, 221, 177, .86);
+          color: #7c5c58;
           font: 500 12px/1.5 Cairo, sans-serif;
           letter-spacing: .22em;
         }
@@ -766,12 +764,12 @@ export default function WeddingInviteDemo() {
         .music-control.on { animation: music-glow 1.8s ease-in-out infinite; }
 
         @media (max-width: 520px) {
-          .countdown-section { min-height: 100dvh; padding: 108px 12px 72px; }
-          .countdown-section::before { width: 118%; height: 220px; opacity: .42; }
-          .countdown-panel { padding: 38px 12px 27px; outline-offset: -7px; }
-          .countdown-grid { gap: 6px; }
-          .countdown-unit { min-height: 111px; padding: 18px 2px 14px; border-radius: 46px 46px 5px 5px; }
-          .countdown-unit::before { inset: 5px; border-radius: 40px 40px 2px 2px; }
+          .countdown-section { min-height: 100dvh; padding: 86px 10px 68px; background-size: 520px auto; }
+          .countdown-section::before { top: -28px; left: -64px; width: 260px; opacity: .58; }
+          .countdown-section::after { right: -58px; bottom: -48px; width: 255px; opacity: .52; }
+          .countdown-panel { padding: 38px 9px 27px; outline-offset: -7px; }
+          .countdown-unit { padding: 10% 1px 3%; }
+          .countdown-number { font-size: clamp(25px, 8vw, 34px); }
           .countdown-label { letter-spacing: .045em; }
           .countdown-date { margin-top: 24px; font-size: 10px; letter-spacing: .16em; }
           .gallery-section, .rsvp-section { padding: 72px 16px 80px; }
