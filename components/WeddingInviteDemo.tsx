@@ -509,32 +509,63 @@ export default function WeddingInviteDemo() {
         }
 
         .venue-section {
-          min-height: 92vh;
+          min-height: 100vh;
           display: grid;
           place-items: center;
-          padding: 84px 18px 96px;
+          position: relative;
+          overflow: hidden;
+          padding: 100px 18px 108px;
           color: #5c1421;
           background:
-            radial-gradient(circle at 85% 10%, rgba(173, 21, 47, .08), transparent 30%),
-            linear-gradient(180deg, #f8efe1 0%, #fffaf3 56%, #f4e7d4 100%);
+            radial-gradient(circle at 50% 16%, rgba(255,255,255,.88), transparent 33%),
+            #fff7e9 url('/wedding-assets/invitation-paper.webp') center top / 720px auto repeat-y;
           box-sizing: border-box;
         }
 
+        .venue-section::before,
+        .venue-section::after {
+          content: '';
+          position: absolute;
+          z-index: 0;
+          width: min(43vw, 340px);
+          aspect-ratio: 1;
+          pointer-events: none;
+          opacity: .58;
+          filter: drop-shadow(0 18px 26px rgba(87, 11, 28, .14));
+        }
+
+        .venue-section::before {
+          top: -68px;
+          right: -82px;
+          background: url('/wedding-assets/floral-corner-top.webp') center / contain no-repeat;
+          transform: scaleX(-1);
+        }
+
+        .venue-section::after {
+          left: -86px;
+          bottom: -86px;
+          background: url('/wedding-assets/floral-corner-bottom.webp') center / contain no-repeat;
+          transform: scaleX(-1);
+        }
+
         .venue-shell {
-          width: min(100%, 760px);
+          position: relative;
+          z-index: 1;
+          width: min(100%, 790px);
           text-align: center;
         }
 
         .venue-pin {
-          width: 50px;
-          height: 50px;
+          width: 58px;
+          height: 58px;
           display: grid;
           place-items: center;
-          margin: 0 auto 17px;
-          border: 1px solid rgba(178, 126, 54, .55);
+          margin: 0 auto 18px;
+          border: 1px solid rgba(178, 126, 54, .72);
           border-radius: 50%;
           color: #a86e25;
-          background: rgba(255, 252, 246, .8);
+          background: rgba(255, 252, 246, .92);
+          box-shadow: 0 10px 28px rgba(91, 30, 37, .1), inset 0 0 0 5px rgba(178, 126, 54, .08);
         }
 
         .venue-kicker {
@@ -552,62 +583,93 @@ export default function WeddingInviteDemo() {
         }
 
         .venue-place {
-          margin: 10px 0 30px;
+          margin: 10px 0 18px;
           color: #8c6b62;
-          font: 500 12px/1.5 Cairo, sans-serif;
+          font: 500 13px/1.5 Cairo, sans-serif;
           letter-spacing: .15em;
         }
 
-        .venue-layout {
-          display: grid;
-          grid-template-columns: 1.04fr .96fr;
-          overflow: hidden;
-          border: 1px solid rgba(178, 126, 54, .55);
-          background: #fff;
-          box-shadow: 0 24px 58px rgba(84, 15, 29, .17);
-          text-align: left;
+        .venue-divider {
+          display: block;
+          width: min(54%, 250px);
+          height: 42px;
+          margin: 0 auto 22px;
+          object-fit: contain;
         }
 
-        .venue-art {
-          min-height: 310px;
-          display: grid;
-          place-items: center;
-          overflow: hidden;
-          background: #f4e9d9;
-        }
-
-        .venue-art img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          transform: scale(1.04);
-        }
-
-        .venue-map-wrap {
-          min-height: 310px;
+        .venue-card {
           position: relative;
-          display: flex;
-          flex-direction: column;
-          padding: 10px;
-          background: #f8efe3;
+          padding: 9px;
+          overflow: hidden;
+          border: 1px solid rgba(175, 119, 43, .75);
+          background: linear-gradient(145deg, #8d2035, #4d0714 58%, #6a1022);
+          box-shadow: 0 30px 70px rgba(84, 15, 29, .22), 0 0 0 8px rgba(179, 123, 48, .06);
+        }
+
+        .venue-map-frame {
+          position: relative;
+          width: 100%;
+          height: 390px;
+          overflow: hidden;
+          background: #eadcc8;
+        }
+
+        .venue-map-frame::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          border: 1px solid rgba(255, 238, 196, .62);
+          box-shadow: inset 0 0 38px rgba(66, 8, 19, .18);
+          pointer-events: none;
         }
 
         .venue-map {
+          display: block;
           width: 100%;
-          flex: 1;
-          min-height: 230px;
+          height: 100%;
           border: 0;
-          filter: sepia(.28) saturate(.74) contrast(.96);
+          filter: sepia(.2) saturate(.82) contrast(.96);
+        }
+
+        .venue-information {
+          display: grid;
+          grid-template-columns: 1fr auto 1fr;
+          align-items: center;
+          gap: 24px;
+          padding: 24px 25px 22px;
+          color: #f3ddb0;
+          text-align: center;
+        }
+
+        .venue-fact span {
+          display: block;
+          margin-bottom: 5px;
+          color: #cc9b4f;
+          font: 600 10px/1.4 Cairo, sans-serif;
+          letter-spacing: .18em;
+        }
+
+        .venue-fact strong {
+          color: #f6e4bc;
+          font: 400 16px/1.35 Georgia, serif;
+          letter-spacing: .06em;
+        }
+
+        .venue-information-divider {
+          width: 1px;
+          height: 38px;
+          background: linear-gradient(transparent, rgba(222, 181, 106, .7), transparent);
         }
 
         .venue-directions {
-          min-height: 52px;
+          min-height: 54px;
           display: inline-flex;
           align-items: center;
           justify-content: center;
           gap: 9px;
-          margin-top: 9px;
-          border: 1px solid #8f3546;
+          margin-top: 18px;
+          padding: 0 28px;
+          border: 1px solid #8b2d40;
           border-radius: 2px;
           color: #f5dfb6;
           background: linear-gradient(135deg, #76152a, #530914);
@@ -624,9 +686,13 @@ export default function WeddingInviteDemo() {
         }
 
         @media (max-width: 620px) {
-          .venue-layout { grid-template-columns: 1fr; }
-          .venue-art { min-height: 230px; }
-          .venue-map-wrap { min-height: 300px; }
+          .venue-section { padding: 82px 11px 90px; }
+          .venue-section::before, .venue-section::after { width: 260px; opacity: .42; }
+          .venue-title { font-size: clamp(29px, 9vw, 40px); }
+          .venue-map-frame { height: 330px; }
+          .venue-information { gap: 12px; padding: 20px 8px 18px; }
+          .venue-fact strong { font-size: 13px; letter-spacing: .025em; }
+          .venue-fact span { font-size: 9px; }
         }
 
         .gallery-section {
@@ -949,12 +1015,10 @@ export default function WeddingInviteDemo() {
           <p className="venue-kicker">THE VENUE</p>
           <h2 id="venue-title" className="venue-title">GRAND HYATT MUSCAT</h2>
           <p className="venue-place">MUSCAT · OMAN</p>
+          <img className="venue-divider" src="/wedding-assets/gold-divider.png" alt="" draggable={false} />
 
-          <div className="venue-layout">
-            <div className="venue-art">
-              <img src="/wedding-assets/location-card.png" alt="Grand Hyatt Muscat wedding venue" />
-            </div>
-            <div className="venue-map-wrap">
+          <div className="venue-card">
+            <div className="venue-map-frame">
               <iframe
                 className="venue-map"
                 title="Grand Hyatt Muscat map"
@@ -962,17 +1026,29 @@ export default function WeddingInviteDemo() {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
               />
-              <a
-                className="venue-directions"
-                href="https://www.google.com/maps/search/?api=1&query=Grand+Hyatt+Muscat%2C+Muscat%2C+Oman"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <Navigation size={17} strokeWidth={1.7} />
-                GET DIRECTIONS
-              </a>
+            </div>
+            <div className="venue-information">
+              <div className="venue-fact">
+                <span>THE DATE</span>
+                <strong>05 OCTOBER 2026</strong>
+              </div>
+              <span className="venue-information-divider" aria-hidden="true" />
+              <div className="venue-fact">
+                <span>THE TIME</span>
+                <strong>7:00 PM</strong>
+              </div>
             </div>
           </div>
+
+          <a
+            className="venue-directions"
+            href="https://www.google.com/maps/search/?api=1&query=Grand+Hyatt+Muscat%2C+Muscat%2C+Oman"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Navigation size={17} strokeWidth={1.7} />
+            OPEN IN GOOGLE MAPS
+          </a>
         </div>
       </section>
 
