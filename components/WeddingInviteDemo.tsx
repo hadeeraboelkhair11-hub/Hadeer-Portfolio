@@ -171,38 +171,26 @@ export default function WeddingInviteDemo() {
 
         .opening-key-button {
           position: absolute;
-          right: 96%;
+          left: 55%;
           top: 50.2%;
           z-index: 5;
-          width: min(76vw, 430px);
+          width: min(58vw, 340px);
           padding: 0;
           border: 0;
           background: transparent;
-          transform: translateY(-50%) rotate(-5deg);
-          transform-origin: right center;
+          transform: translateY(-50%) rotate(5deg);
+          transform-origin: left center;
           cursor: pointer;
           filter: drop-shadow(0 16px 18px rgba(0,0,0,.48));
           -webkit-tap-highlight-color: transparent;
-          will-change: right, transform, opacity;
-        }
-
-        .opening-key-button::after {
-          content: '';
-          position: absolute;
-          right: -8px;
-          top: 50%;
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          transform: translate(50%, -50%);
-          box-shadow: 0 0 0 0 rgba(255, 211, 116, .34);
-          animation: key-target 2s ease-out infinite;
+          will-change: left, transform, opacity;
         }
 
         .opening-key-button img {
           display: block;
           width: 100%;
           height: auto;
+          transform: scaleX(-1);
         }
 
         .opening-stage.is-unlocking .opening-key-button {
@@ -783,17 +771,12 @@ export default function WeddingInviteDemo() {
           50% { box-shadow: 0 8px 24px rgba(0,0,0,.3), 0 0 0 8px rgba(211,169,91,0); }
         }
 
-        @keyframes key-target {
-          0% { box-shadow: 0 0 0 0 rgba(255, 211, 116, .32); }
-          72%, 100% { box-shadow: 0 0 0 17px rgba(255, 211, 116, 0); }
-        }
-
         @keyframes key-unlock {
-          0% { right: 96%; transform: translateY(-50%) rotate(-5deg); opacity: 1; }
-          54% { right: 49%; transform: translateY(-50%) rotate(0deg); opacity: 1; }
-          73% { right: 49%; transform: translateY(-50%) rotate(0deg); opacity: 1; }
-          91% { right: 49%; transform: translateY(-50%) rotate(23deg); opacity: 1; }
-          100% { right: 49%; transform: translateY(-50%) rotate(23deg); opacity: 0; }
+          0% { left: 55%; transform: translateY(-50%) rotate(5deg); opacity: 1; }
+          54% { left: 49%; transform: translateY(-50%) rotate(0deg); opacity: 1; }
+          73% { left: 49%; transform: translateY(-50%) rotate(0deg); opacity: 1; }
+          91% { left: 49%; transform: translateY(-50%) rotate(-23deg); opacity: 1; }
+          100% { left: 49%; transform: translateY(-50%) rotate(-23deg); opacity: 0; }
         }
 
         @keyframes lock-release {
@@ -813,7 +796,7 @@ export default function WeddingInviteDemo() {
             transition-duration: 1ms !important;
             animation-duration: 1ms !important;
           }
-          .opening-key-button::after, .countdown-cue span:last-child { animation: none; }
+          .countdown-cue span:last-child { animation: none; }
         }
       `}</style>
 
