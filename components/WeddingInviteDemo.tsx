@@ -19,6 +19,7 @@ export default function WeddingInviteDemo() {
   const [isOpen, setIsOpen] = useState(false);
   const [isUnlocking, setIsUnlocking] = useState(false);
   const [showCountdown, setShowCountdown] = useState(false);
+  const [countdownInView, setCountdownInView] = useState(false);
   const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft);
   const [rsvpSent, setRsvpSent] = useState(false);
   const [guestName, setGuestName] = useState('');
@@ -40,6 +41,20 @@ export default function WeddingInviteDemo() {
     const timer = window.setTimeout(() => setShowCountdown(true), 1700);
     return () => window.clearTimeout(timer);
   }, [isOpen]);
+
+  useEffect(() => {
+    const section = document.getElementById('wedding-countdown');
+    if (!section) return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      setCountdownInView(true);
+      observer.disconnect();
+    }, { threshold: 0.32 });
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
 
   const openInvitation = () => {
     if (!isOpen && !isUnlocking) setIsUnlocking(true);
@@ -325,7 +340,8 @@ export default function WeddingInviteDemo() {
           padding: 104px 20px 92px;
           color: #641222;
           background:
-            radial-gradient(circle at 50% 18%, rgba(255,255,255,.72), transparent 34%),
+            radial-gradient(circle at 50% 15%, rgba(255,255,255,.88), transparent 35%),
+            radial-gradient(circle at 12% 84%, rgba(161, 17, 45, .07), transparent 28%),
             #fff7e9 url('/wedding-assets/invitation-paper.webp') center top / 720px auto repeat-y;
           border-top: 1px solid rgba(174, 119, 48, .28);
           box-sizing: border-box;
@@ -360,8 +376,8 @@ export default function WeddingInviteDemo() {
         .countdown-panel {
           position: relative;
           z-index: 1;
-          width: min(100%, 760px);
-          padding: 52px 30px 40px;
+          width: min(100%, 740px);
+          padding: 48px 32px 38px;
           border: 1px solid rgba(169, 112, 43, .48);
           border-radius: 2px;
           outline: 1px solid rgba(169, 112, 43, .16);
@@ -372,6 +388,13 @@ export default function WeddingInviteDemo() {
           box-shadow: 0 26px 65px rgba(91, 30, 37, .13), 0 0 36px rgba(218, 168, 83, .12), inset 0 0 42px rgba(174, 119, 48, .04);
           text-align: center;
           box-sizing: border-box;
+          opacity: 0;
+          transform: translateY(34px) scale(.975);
+          will-change: transform, opacity;
+        }
+
+        .countdown-section.is-visible .countdown-panel {
+          animation: countdown-arrive 950ms cubic-bezier(.16,.8,.2,1) forwards;
         }
 
         .countdown-panel::before,
@@ -388,23 +411,23 @@ export default function WeddingInviteDemo() {
         .countdown-panel::after { right: 20px; }
 
         .countdown-kicker {
-          margin: 0 0 12px;
+          margin: 0 0 10px;
           color: #a36d2c;
-          font: 600 12px/1.5 Cairo, sans-serif;
+          font: 600 11px/1.5 Cairo, sans-serif;
           letter-spacing: .28em;
         }
 
         .countdown-title {
           margin: 0;
           color: #681326;
-          font: 400 clamp(30px, 7vw, 46px)/1.2 Georgia, serif;
+          font: 400 clamp(31px, 6vw, 45px)/1.18 Georgia, serif;
         }
 
         .countdown-divider {
           position: relative;
           width: min(72%, 260px);
           height: 1px;
-          margin: 24px auto 31px;
+          margin: 22px auto 27px;
           background: linear-gradient(90deg, transparent, #b67d35, transparent);
         }
 
@@ -427,8 +450,8 @@ export default function WeddingInviteDemo() {
           align-items: stretch;
           gap: 0;
           width: 100%;
-          aspect-ratio: 1776 / 755;
-          padding: 0 1.5%;
+          aspect-ratio: 1774 / 887;
+          padding: 0;
           background: url('/wedding-assets/countdown-frames.webp') center / 100% 100% no-repeat;
           box-sizing: border-box;
           direction: ltr;
@@ -442,29 +465,44 @@ export default function WeddingInviteDemo() {
           align-items: center;
           justify-content: center;
           min-width: 0;
-          padding: 10.5% 2px 4%;
+          padding: 3% 2px 0;
           border: 0;
           background: transparent;
+          opacity: 0;
+          transform: translateY(14px);
+        }
+
+        .countdown-section.is-visible .countdown-unit {
+          animation: countdown-unit-arrive 650ms cubic-bezier(.2,.75,.2,1) forwards;
+        }
+
+        .countdown-section.is-visible .countdown-unit:nth-child(1) { animation-delay: 390ms; }
+        .countdown-section.is-visible .countdown-unit:nth-child(2) { animation-delay: 500ms; }
+        .countdown-section.is-visible .countdown-unit:nth-child(3) { animation-delay: 610ms; }
+        .countdown-section.is-visible .countdown-unit:nth-child(4) { animation-delay: 720ms; }
+
+        .countdown-section.is-visible .countdown-number {
+          animation: countdown-tick 420ms cubic-bezier(.2,.8,.2,1);
         }
 
         .countdown-number {
           display: block;
           color: #6b1426;
-          font: 400 clamp(28px, 7vw, 50px)/1 Georgia, serif;
+          font: 400 clamp(28px, 6vw, 48px)/1 Georgia, serif;
           font-variant-numeric: tabular-nums;
           text-shadow: 0 2px 10px rgba(108, 20, 38, .12);
         }
 
         .countdown-label {
           display: block;
-          margin-top: 9px;
+          margin-top: 8px;
           color: #9a682d;
           font: 600 clamp(8px, 2vw, 10px)/1.2 Cairo, sans-serif;
           letter-spacing: .12em;
         }
 
         .countdown-date {
-          margin: 30px 0 0;
+          margin: 26px 0 0;
           color: #7c5c58;
           font: 500 12px/1.5 Cairo, sans-serif;
           letter-spacing: .22em;
@@ -752,13 +790,14 @@ export default function WeddingInviteDemo() {
         .music-control.on { animation: music-glow 1.8s ease-in-out infinite; }
 
         @media (max-width: 520px) {
-          .countdown-section { min-height: 100dvh; padding: 86px 10px 68px; background-size: 520px auto; }
+          .countdown-section { min-height: 100dvh; padding: 78px 10px 64px; background-size: 520px auto; }
           .countdown-section::before { top: -28px; left: -64px; width: 260px; opacity: .58; }
           .countdown-section::after { right: -58px; bottom: -48px; width: 255px; opacity: .52; }
-          .countdown-panel { padding: 38px 9px 27px; outline-offset: -7px; }
-          .countdown-unit { padding: 10% 1px 3%; }
+          .countdown-panel { padding: 36px 8px 26px; outline-offset: -7px; }
+          .countdown-divider { margin-bottom: 22px; }
+          .countdown-unit { padding: 3% 1px 0; }
           .countdown-number { font-size: clamp(25px, 8vw, 34px); }
-          .countdown-label { letter-spacing: .045em; }
+          .countdown-label { margin-top: 6px; font-size: clamp(7px, 2vw, 9px); letter-spacing: .025em; }
           .countdown-date { margin-top: 24px; font-size: 10px; letter-spacing: .16em; }
           .gallery-section, .rsvp-section { padding: 72px 16px 80px; }
           .rsvp-card { padding: 25px 18px; }
@@ -769,6 +808,19 @@ export default function WeddingInviteDemo() {
         @keyframes music-glow {
           0%, 100% { box-shadow: 0 8px 24px rgba(0,0,0,.3), 0 0 0 0 rgba(211,169,91,.24); }
           50% { box-shadow: 0 8px 24px rgba(0,0,0,.3), 0 0 0 8px rgba(211,169,91,0); }
+        }
+
+        @keyframes countdown-arrive {
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes countdown-unit-arrive {
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes countdown-tick {
+          0% { opacity: .35; transform: translateY(-5px) scale(.94); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         @keyframes key-unlock {
@@ -792,7 +844,8 @@ export default function WeddingInviteDemo() {
 
         @media (prefers-reduced-motion: reduce) {
           .opening-backdrop, .opening-reveal-art, .lock-cluster, .opening-lock,
-          .opening-key-button, .opening-hint, .opening-content, .countdown-cue {
+          .opening-key-button, .opening-hint, .opening-content, .countdown-cue,
+          .countdown-panel, .countdown-unit, .countdown-number {
             transition-duration: 1ms !important;
             animation-duration: 1ms !important;
           }
@@ -864,7 +917,11 @@ export default function WeddingInviteDemo() {
         </button>
       </section>
 
-      <section id="wedding-countdown" className="countdown-section" aria-labelledby="countdown-title">
+      <section
+        id="wedding-countdown"
+        className={`countdown-section${countdownInView ? ' is-visible' : ''}`}
+        aria-labelledby="countdown-title"
+      >
         <div className="countdown-panel">
           <p className="countdown-kicker">COUNTING DOWN</p>
           <h2 id="countdown-title" className="countdown-title">Until our forever begins</h2>
@@ -877,7 +934,7 @@ export default function WeddingInviteDemo() {
               ['seconds', timeLeft.seconds, 'SECONDS'],
             ].map(([key, value, label]) => (
               <div className="countdown-unit" key={key}>
-                <strong className="countdown-number">{String(value).padStart(2, '0')}</strong>
+                <strong className="countdown-number" key={`${key}-${value}`}>{String(value).padStart(2, '0')}</strong>
                 <span className="countdown-label">{label}</span>
               </div>
             ))}
