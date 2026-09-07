@@ -328,87 +328,160 @@ export default function WeddingInviteDemo() {
         }
 
         .countdown-section {
-          min-height: 78vh;
+          min-height: 100vh;
+          min-height: 100dvh;
           display: grid;
           place-items: center;
-          padding: 78px 18px 92px;
+          position: relative;
+          overflow: hidden;
+          padding: 132px 20px 96px;
           color: #f4ddb1;
           background:
-            radial-gradient(circle at 50% 0%, rgba(132, 17, 39, .62), transparent 45%),
-            linear-gradient(180deg, #26040a 0%, #4a0714 48%, #210308 100%);
+            linear-gradient(rgba(35, 2, 8, .33), rgba(22, 1, 5, .55)),
+            url('/wedding-assets/opening-bg.webp') center / cover no-repeat;
           border-top: 1px solid rgba(195, 144, 66, .42);
           box-sizing: border-box;
         }
 
-        .countdown-panel {
-          width: min(100%, 660px);
-          padding: 40px 22px 30px;
-          border: 1px solid rgba(204, 157, 84, .62);
-          outline: 1px solid rgba(204, 157, 84, .2);
-          outline-offset: -8px;
-          background: linear-gradient(145deg, rgba(111, 9, 29, .72), rgba(48, 3, 12, .92));
-          box-shadow: 0 24px 65px rgba(0, 0, 0, .42), inset 0 0 46px rgba(255, 193, 95, .04);
-          text-align: center;
+        .countdown-section::before {
+          content: '';
+          position: absolute;
+          top: -20px;
+          left: 50%;
+          width: min(110%, 670px);
+          height: min(52vw, 300px);
+          background: url('/wedding-assets/opening-reveal.webp') center top / contain no-repeat;
+          transform: translateX(-50%);
+          opacity: .48;
+          filter: drop-shadow(0 12px 20px rgba(0,0,0,.38));
+          pointer-events: none;
         }
 
+        .countdown-section::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(circle at 50% 52%, rgba(134, 25, 44, .18), transparent 42%);
+          pointer-events: none;
+        }
+
+        .countdown-panel {
+          position: relative;
+          z-index: 1;
+          width: min(100%, 720px);
+          padding: 48px 34px 36px;
+          border: 1px solid rgba(219, 174, 91, .76);
+          border-radius: 4px;
+          outline: 1px solid rgba(219, 174, 91, .24);
+          outline-offset: -10px;
+          background:
+            radial-gradient(circle at 50% 20%, rgba(155, 31, 50, .28), transparent 46%),
+            linear-gradient(155deg, rgba(104, 10, 27, .94), rgba(45, 2, 11, .97));
+          box-shadow: 0 30px 75px rgba(0, 0, 0, .5), inset 0 0 52px rgba(255, 193, 95, .035);
+          text-align: center;
+          box-sizing: border-box;
+        }
+
+        .countdown-panel::before,
+        .countdown-panel::after {
+          content: '◆';
+          position: absolute;
+          top: 17px;
+          color: #d5aa62;
+          font-size: 10px;
+          text-shadow: 0 0 10px rgba(236, 186, 92, .35);
+        }
+
+        .countdown-panel::before { left: 20px; }
+        .countdown-panel::after { right: 20px; }
+
         .countdown-kicker {
-          margin: 0 0 11px;
-          color: #d5ad6b;
-          font: 600 11px/1.5 Cairo, sans-serif;
-          letter-spacing: .22em;
+          margin: 0 0 12px;
+          color: #dcb874;
+          font: 600 12px/1.5 Cairo, sans-serif;
+          letter-spacing: .28em;
         }
 
         .countdown-title {
           margin: 0;
           color: #f2d8a5;
-          font: 400 clamp(27px, 7vw, 43px)/1.25 Georgia, serif;
+          font: 400 clamp(30px, 7vw, 46px)/1.2 Georgia, serif;
         }
 
         .countdown-divider {
-          width: 88px;
+          position: relative;
+          width: min(72%, 260px);
           height: 1px;
-          margin: 22px auto 27px;
+          margin: 24px auto 31px;
           background: linear-gradient(90deg, transparent, #d0a55e, transparent);
+        }
+
+        .countdown-divider::after {
+          content: '✦';
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          padding: 0 9px;
+          color: #d8ae65;
+          background: #650a1b;
+          font-size: 12px;
+          transform: translate(-50%, -50%);
         }
 
         .countdown-grid {
           display: grid;
           grid-template-columns: repeat(4, minmax(0, 1fr));
-          gap: 9px;
+          align-items: stretch;
+          gap: 14px;
           direction: ltr;
         }
 
         .countdown-unit {
           position: relative;
+          display: flex;
+          min-height: 132px;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
           min-width: 0;
-          padding: 22px 3px 17px;
+          padding: 22px 6px 18px;
           overflow: hidden;
-          border: 1px solid rgba(208, 156, 77, .56);
-          border-radius: 48px 48px 2px 2px;
-          background: linear-gradient(180deg, rgba(116, 11, 32, .9), rgba(67, 4, 17, .92));
-          box-shadow: inset 0 0 22px rgba(255, 200, 112, .05);
+          border: 1px solid rgba(215, 165, 82, .68);
+          border-radius: 66px 66px 7px 7px;
+          background: linear-gradient(180deg, rgba(128, 15, 37, .96), rgba(67, 4, 17, .97));
+          box-shadow: inset 0 0 26px rgba(255, 200, 112, .055), 0 12px 22px rgba(20,0,4,.25);
+        }
+
+        .countdown-unit::before {
+          content: '';
+          position: absolute;
+          inset: 7px;
+          border: 1px solid rgba(228, 184, 100, .14);
+          border-radius: 58px 58px 3px 3px;
+          pointer-events: none;
         }
 
         .countdown-number {
           display: block;
           color: #f2d59c;
-          font: 400 clamp(28px, 8vw, 48px)/1 Georgia, serif;
+          font: 400 clamp(32px, 8vw, 52px)/1 Georgia, serif;
           font-variant-numeric: tabular-nums;
+          text-shadow: 0 3px 14px rgba(0,0,0,.32);
         }
 
         .countdown-label {
           display: block;
-          margin-top: 9px;
+          margin-top: 11px;
           color: #cda65f;
-          font: 500 clamp(7px, 2vw, 10px)/1.2 Cairo, sans-serif;
-          letter-spacing: .09em;
+          font: 600 clamp(8px, 2vw, 10px)/1.2 Cairo, sans-serif;
+          letter-spacing: .12em;
         }
 
         .countdown-date {
-          margin: 24px 0 0;
-          color: rgba(244, 221, 177, .74);
-          font: 400 11px/1.5 Cairo, sans-serif;
-          letter-spacing: .19em;
+          margin: 30px 0 0;
+          color: rgba(244, 221, 177, .86);
+          font: 500 12px/1.5 Cairo, sans-serif;
+          letter-spacing: .22em;
         }
 
         .venue-section {
@@ -693,11 +766,14 @@ export default function WeddingInviteDemo() {
         .music-control.on { animation: music-glow 1.8s ease-in-out infinite; }
 
         @media (max-width: 520px) {
-          .countdown-section { min-height: 70vh; padding: 62px 12px 72px; }
-          .countdown-panel { padding: 32px 12px 25px; }
+          .countdown-section { min-height: 100dvh; padding: 108px 12px 72px; }
+          .countdown-section::before { width: 118%; height: 220px; opacity: .42; }
+          .countdown-panel { padding: 38px 12px 27px; outline-offset: -7px; }
           .countdown-grid { gap: 6px; }
-          .countdown-unit { padding: 19px 2px 15px; }
-          .countdown-label { letter-spacing: .04em; }
+          .countdown-unit { min-height: 111px; padding: 18px 2px 14px; border-radius: 46px 46px 5px 5px; }
+          .countdown-unit::before { inset: 5px; border-radius: 40px 40px 2px 2px; }
+          .countdown-label { letter-spacing: .045em; }
+          .countdown-date { margin-top: 24px; font-size: 10px; letter-spacing: .16em; }
           .gallery-section, .rsvp-section { padding: 72px 16px 80px; }
           .rsvp-card { padding: 25px 18px; }
           .finale-actions { flex-direction: column; }
