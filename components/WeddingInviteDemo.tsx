@@ -1,7 +1,6 @@
 import React, { FormEvent, useEffect, useState } from 'react';
 import { Camera, Check, Heart, MapPin, Music2, Navigation, Share2, VolumeX } from 'lucide-react';
 
-const cover = '/wedding-assets/opening-cover.png';
 const weddingDate = new Date('2026-10-05T19:00:00+04:00').getTime();
 
 type TimeLeft = { days: number; hours: number; minutes: number; seconds: number };
@@ -18,6 +17,7 @@ const calculateTimeLeft = (): TimeLeft => {
 
 export default function WeddingInviteDemo() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isUnlocking, setIsUnlocking] = useState(false);
   const [showCountdown, setShowCountdown] = useState(false);
   const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft);
   const [rsvpSent, setRsvpSent] = useState(false);
@@ -30,13 +30,19 @@ export default function WeddingInviteDemo() {
   }, []);
 
   useEffect(() => {
+    if (!isUnlocking || isOpen) return;
+    const timer = window.setTimeout(() => setIsOpen(true), 1550);
+    return () => window.clearTimeout(timer);
+  }, [isUnlocking, isOpen]);
+
+  useEffect(() => {
     if (!isOpen) return;
-    const timer = window.setTimeout(() => setShowCountdown(true), 1100);
+    const timer = window.setTimeout(() => setShowCountdown(true), 1700);
     return () => window.clearTimeout(timer);
   }, [isOpen]);
 
   const openInvitation = () => {
-    if (!isOpen) setIsOpen(true);
+    if (!isOpen && !isUnlocking) setIsUnlocking(true);
   };
 
   const goToCountdown = () => {
@@ -72,130 +78,135 @@ export default function WeddingInviteDemo() {
           display: grid;
           place-items: center;
           overflow: hidden;
-          padding: 18px;
-          background:
-            radial-gradient(circle at 50% 44%, rgba(108, 15, 29, .34), transparent 42%),
-            linear-gradient(150deg, #210308 0%, #0d0103 58%, #190206 100%);
-          box-sizing: border-box;
+          background: #260308;
           position: relative;
         }
 
-        .invitation-stage {
+        .opening-stage {
           position: relative;
-          width: min(88vw, calc((100dvh - 36px) * 269 / 431), 420px);
-          aspect-ratio: 269 / 431;
-          perspective: 1500px;
-          filter: drop-shadow(0 28px 34px rgba(0, 0, 0, .54));
+          width: min(100%, 620px);
+          height: 100vh;
+          height: 100dvh;
+          min-height: 620px;
+          overflow: hidden;
           isolation: isolate;
         }
 
-        .inner-card {
-          position: absolute;
-          inset: 1.3%;
-          width: 97.4%;
-          height: 97.4%;
-          object-fit: contain;
-          background: #f5ead8;
-          box-shadow: 0 0 32px rgba(232, 190, 112, .16);
-          opacity: .86;
-          transform: scale(.965);
-          transition: opacity 900ms ease 460ms, transform 1100ms cubic-bezier(.2,.72,.2,1) 400ms;
-        }
-
-        .invitation-stage.is-open .inner-card {
-          opacity: 1;
-          transform: scale(1);
-        }
-
-        .door {
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          width: 50.15%;
-          z-index: 2;
-          overflow: hidden;
-          transform-style: preserve-3d;
-          transition: transform 1550ms cubic-bezier(.18,.78,.2,1), filter 1200ms ease;
-          will-change: transform;
-          backface-visibility: visible;
-          -webkit-backface-visibility: visible;
-        }
-
-        .door-left {
-          left: 0;
-          transform-origin: left center;
-          border-radius: 2px 0 0 2px;
-        }
-
-        .door-right {
-          right: 0;
-          transform-origin: right center;
-          border-radius: 0 2px 2px 0;
-        }
-
-        .door img {
-          position: absolute;
-          top: 0;
-          width: 199.4%;
-          max-width: none;
-          height: 100%;
-          object-fit: fill;
-          pointer-events: none;
-          user-select: none;
-        }
-
-        .door-left img { left: 0; }
-        .door-right img { right: 0; }
-
-        .invitation-stage.is-open .door-left {
-          transform: rotateY(-84deg);
-          filter: brightness(.58) drop-shadow(8px 0 10px rgba(0,0,0,.28));
-        }
-
-        .invitation-stage.is-open .door-right {
-          transform: rotateY(84deg);
-          filter: brightness(.58) drop-shadow(-8px 0 10px rgba(0,0,0,.28));
-        }
-
-        .seal-trigger {
-          position: absolute;
-          left: 50%;
-          top: 50%;
-          z-index: 4;
-          width: 35%;
-          aspect-ratio: 1;
-          padding: 0;
-          border: 0;
-          border-radius: 50%;
-          background: transparent;
-          transform: translate(-50%, -50%);
-          cursor: pointer;
-          transition: opacity 360ms ease, transform 480ms ease, visibility 360ms step-end;
-        }
-
-        .seal-trigger::after {
-          content: '';
-          position: absolute;
-          inset: 11%;
-          border-radius: 50%;
-          box-shadow: 0 0 0 1px rgba(255, 222, 151, .2), 0 0 22px rgba(248, 200, 112, .26);
-          animation: seal-pulse 2.2s ease-in-out infinite;
-        }
-
-        .seal-trigger img {
+        .opening-backdrop {
           position: absolute;
           inset: 0;
           width: 100%;
           height: 100%;
-          object-fit: contain;
-          filter: drop-shadow(0 10px 12px rgba(0,0,0,.46));
-          user-select: none;
+          object-fit: cover;
+          object-position: center;
+          z-index: -3;
+          transform: scale(1.025);
+          transition: transform 2200ms cubic-bezier(.2,.72,.2,1), filter 1800ms ease;
         }
 
-        .invitation-stage.is-open .seal-trigger {
+        .opening-stage.is-open .opening-backdrop {
+          transform: scale(1);
+          filter: brightness(.82) saturate(1.06);
+        }
+
+        .opening-vignette {
+          position: absolute;
+          inset: 0;
+          z-index: -2;
+          background:
+            radial-gradient(circle at 50% 48%, transparent 0 20%, rgba(18, 0, 4, .18) 62%, rgba(10, 0, 2, .62) 100%),
+            linear-gradient(180deg, rgba(15,0,3,.12), transparent 20%, transparent 76%, rgba(15,0,3,.48));
+          pointer-events: none;
+        }
+
+        .opening-reveal-art {
+          position: absolute;
+          z-index: 1;
+          top: 0;
+          left: 50%;
+          width: min(122%, 720px);
+          height: min(72vh, 720px);
+          object-fit: contain;
+          object-position: center top;
+          opacity: 0;
+          transform: translate(-50%, -9%) scale(.92);
+          filter: drop-shadow(0 18px 28px rgba(0,0,0,.38));
+          transition: opacity 950ms ease 240ms, transform 1500ms cubic-bezier(.16,.8,.2,1) 160ms;
+          pointer-events: none;
+        }
+
+        .opening-stage.is-open .opening-reveal-art {
+          opacity: 1;
+          transform: translate(-50%, 0) scale(1);
+        }
+
+        .lock-cluster {
+          position: absolute;
+          inset: 0;
+          z-index: 4;
+          transition: opacity 420ms ease 1180ms, visibility 0s linear 1600ms;
+        }
+
+        .opening-stage.is-open .lock-cluster {
           opacity: 0;
           visibility: hidden;
-          transform: translate(-50%, -50%) scale(.78);
+          pointer-events: none;
+        }
+
+        .opening-lock {
+          position: absolute;
+          left: 50%;
+          top: 47%;
+          width: min(55vw, 288px);
+          height: auto;
+          transform: translate(-50%, -50%) scale(1);
+          filter: drop-shadow(0 20px 26px rgba(0,0,0,.55));
+          transition: filter 300ms ease;
+          pointer-events: none;
+        }
+
+        .opening-stage.is-unlocking .opening-lock {
+          animation: lock-release 1550ms cubic-bezier(.2,.72,.2,1) forwards;
+        }
+
+        .opening-key-button {
+          position: absolute;
+          right: 96%;
+          top: 50.2%;
+          z-index: 5;
+          width: min(76vw, 430px);
+          padding: 0;
+          border: 0;
+          background: transparent;
+          transform: translateY(-50%) rotate(-5deg);
+          transform-origin: right center;
+          cursor: pointer;
+          filter: drop-shadow(0 16px 18px rgba(0,0,0,.48));
+          -webkit-tap-highlight-color: transparent;
+          will-change: right, transform, opacity;
+        }
+
+        .opening-key-button::after {
+          content: '';
+          position: absolute;
+          right: -8px;
+          top: 50%;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          transform: translate(50%, -50%);
+          box-shadow: 0 0 0 0 rgba(255, 211, 116, .34);
+          animation: key-target 2s ease-out infinite;
+        }
+
+        .opening-key-button img {
+          display: block;
+          width: 100%;
+          height: auto;
+        }
+
+        .opening-stage.is-unlocking .opening-key-button {
+          animation: key-unlock 1550ms cubic-bezier(.2,.72,.2,1) forwards;
           pointer-events: none;
         }
 
@@ -203,34 +214,95 @@ export default function WeddingInviteDemo() {
           position: absolute;
           left: 0;
           right: 0;
-          bottom: 4.8%;
-          z-index: 4;
+          bottom: max(7%, 42px);
+          z-index: 6;
           margin: 0;
-          color: #f3d99f;
+          color: #f2d8a0;
           font-family: Cairo, sans-serif;
-          font-size: clamp(12px, 3.4vw, 14px);
-          font-weight: 400;
-          letter-spacing: .02em;
+          font-size: 14px;
+          font-weight: 500;
+          letter-spacing: .04em;
           text-align: center;
           text-shadow: 0 2px 7px rgba(0,0,0,.9);
-          transition: opacity 300ms ease;
+          transition: opacity 300ms ease, transform 300ms ease;
           pointer-events: none;
         }
 
-        .invitation-stage.is-open .opening-hint { opacity: 0; }
+        .opening-stage.is-unlocking .opening-hint,
+        .opening-stage.is-open .opening-hint {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+
+        .opening-content {
+          position: absolute;
+          left: 50%;
+          top: 51%;
+          z-index: 3;
+          width: min(78%, 430px);
+          transform: translate(-50%, -40%) scale(.96);
+          color: #f2dcae;
+          text-align: center;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 900ms ease 560ms, transform 1200ms cubic-bezier(.16,.8,.2,1) 450ms;
+        }
+
+        .opening-stage.is-open .opening-content {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1);
+        }
+
+        .opening-monogram {
+          width: min(52vw, 235px);
+          height: auto;
+          margin: 0 auto -12px;
+          filter: drop-shadow(0 10px 22px rgba(0,0,0,.35));
+        }
+
+        .opening-together {
+          margin: 4px 0 12px;
+          color: #d5aa62;
+          font: 600 10px/1.5 Cairo, sans-serif;
+          letter-spacing: .23em;
+        }
+
+        .opening-names {
+          margin: 0;
+          color: #f5dfb5;
+          font: 400 clamp(35px, 9vw, 54px)/1.05 Georgia, serif;
+          letter-spacing: .035em;
+          text-shadow: 0 3px 18px rgba(0,0,0,.55);
+        }
+
+        .opening-names span {
+          display: block;
+          margin: 4px 0;
+          color: #c99c51;
+          font-size: .62em;
+          font-style: italic;
+        }
+
+        .opening-date {
+          margin: 21px 0 0;
+          color: #e5c78f;
+          font: 500 11px/1.5 Cairo, sans-serif;
+          letter-spacing: .2em;
+        }
 
         .countdown-cue {
           position: absolute;
           left: 50%;
-          bottom: 10px;
-          z-index: 5;
+          bottom: max(2.3%, 12px);
+          z-index: 8;
           display: flex;
           flex-direction: column;
           align-items: center;
           gap: 2px;
           border: 0;
           padding: 7px 18px;
-          background: transparent;
+          background: rgba(40, 2, 9, .22);
+          border-radius: 999px;
           color: #e8c98d;
           font-family: Cairo, sans-serif;
           font-size: 10px;
@@ -637,9 +709,23 @@ export default function WeddingInviteDemo() {
           50% { box-shadow: 0 8px 24px rgba(0,0,0,.3), 0 0 0 8px rgba(211,169,91,0); }
         }
 
-        @keyframes seal-pulse {
-          0%, 100% { transform: scale(.94); opacity: .35; }
-          50% { transform: scale(1.12); opacity: .82; }
+        @keyframes key-target {
+          0% { box-shadow: 0 0 0 0 rgba(255, 211, 116, .32); }
+          72%, 100% { box-shadow: 0 0 0 17px rgba(255, 211, 116, 0); }
+        }
+
+        @keyframes key-unlock {
+          0% { right: 96%; transform: translateY(-50%) rotate(-5deg); opacity: 1; }
+          54% { right: 49%; transform: translateY(-50%) rotate(0deg); opacity: 1; }
+          73% { right: 49%; transform: translateY(-50%) rotate(0deg); opacity: 1; }
+          91% { right: 49%; transform: translateY(-50%) rotate(23deg); opacity: 1; }
+          100% { right: 49%; transform: translateY(-50%) rotate(23deg); opacity: 0; }
+        }
+
+        @keyframes lock-release {
+          0%, 68% { transform: translate(-50%, -50%) scale(1); filter: drop-shadow(0 20px 26px rgba(0,0,0,.55)); opacity: 1; }
+          80% { transform: translate(-50%, -50%) scale(1.055); filter: drop-shadow(0 0 28px rgba(255,208,116,.78)); opacity: 1; }
+          100% { transform: translate(-50%, -50%) scale(.88); filter: drop-shadow(0 0 45px rgba(255,208,116,.2)); opacity: 0; }
         }
 
         @keyframes cue-bob {
@@ -648,40 +734,66 @@ export default function WeddingInviteDemo() {
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .door, .inner-card, .seal-trigger, .opening-hint, .countdown-cue { transition-duration: 1ms !important; }
-          .seal-trigger::after, .countdown-cue span:last-child { animation: none; }
+          .opening-backdrop, .opening-reveal-art, .lock-cluster, .opening-lock,
+          .opening-key-button, .opening-hint, .opening-content, .countdown-cue {
+            transition-duration: 1ms !important;
+            animation-duration: 1ms !important;
+          }
+          .opening-key-button::after, .countdown-cue span:last-child { animation: none; }
         }
       `}</style>
 
       <section className="wedding-opening">
         <div
-          className={`invitation-stage${isOpen ? ' is-open' : ''}`}
-          onClick={openInvitation}
+          className={`opening-stage${isUnlocking ? ' is-unlocking' : ''}${isOpen ? ' is-open' : ''}`}
         >
           <img
-            className="inner-card"
-            src="/wedding-assets/card.webp"
-            alt="Maryam and Saif wedding invitation"
+            className="opening-backdrop"
+            src="/wedding-assets/opening-bg.webp"
+            alt=""
+            draggable={false}
+          />
+          <div className="opening-vignette" aria-hidden="true" />
+
+          <img
+            className="opening-reveal-art"
+            src="/wedding-assets/opening-reveal.webp"
+            alt=""
+            draggable={false}
           />
 
-          <div className="door door-left" aria-hidden="true">
-            <img src={cover} alt="" draggable={false} />
-          </div>
-          <div className="door door-right" aria-hidden="true">
-            <img src={cover} alt="" draggable={false} />
+          <div className="opening-content" aria-hidden={!isOpen}>
+            <img
+              className="opening-monogram"
+              src="/wedding-assets/opening-monogram.webp"
+              alt="Maryam and Saif"
+              draggable={false}
+            />
+            <p className="opening-together">TOGETHER WITH THEIR FAMILIES</p>
+            <h1 className="opening-names">MARYAM <span>&amp;</span> SAIF</h1>
+            <p className="opening-date">05 · OCTOBER · 2026</p>
           </div>
 
-          <button
-            className="seal-trigger"
-            type="button"
-            onClick={openInvitation}
-            aria-label="فتح الدعوة"
-            aria-expanded={isOpen}
-          >
-            <img src="/wedding-assets/seal.webp" alt="" draggable={false} />
-          </button>
+          <div className="lock-cluster">
+            <img
+              className="opening-lock"
+              src="/wedding-assets/opening-lock.webp"
+              alt=""
+              draggable={false}
+            />
+            <button
+              className="opening-key-button"
+              type="button"
+              onClick={openInvitation}
+              aria-label="استخدمي المفتاح لفتح الدعوة"
+              aria-expanded={isOpen}
+              disabled={isUnlocking}
+            >
+              <img src="/wedding-assets/opening-key.webp" alt="" draggable={false} />
+            </button>
+          </div>
 
-          <p className="opening-hint">اضغطي على الختم لفتح الدعوة</p>
+          <p className="opening-hint">اضغطي على المفتاح لفتح الدعوة</p>
         </div>
 
         <button
@@ -778,3 +890,59 @@ export default function WeddingInviteDemo() {
               </div>
             ) : (
               <form className="rsvp-form" onSubmit={submitRsvp}>
+                <label>
+                  YOUR NAME
+                  <input value={guestName} onChange={(event) => setGuestName(event.target.value)} placeholder="Full name" required />
+                </label>
+                <label>
+                  NUMBER OF GUESTS
+                  <select defaultValue="1">
+                    <option value="1">1 Guest</option>
+                    <option value="2">2 Guests</option>
+                    <option value="3">3 Guests</option>
+                    <option value="4">4 Guests</option>
+                  </select>
+                </label>
+                <label>
+                  YOUR RESPONSE
+                  <select defaultValue="" required>
+                    <option value="" disabled>Select response</option>
+                    <option value="accept">Joyfully accepts</option>
+                    <option value="decline">Regretfully declines</option>
+                  </select>
+                </label>
+                <button className="rsvp-submit" type="submit"><Heart size={17} /> SEND RSVP</button>
+              </form>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <footer className="finale-section">
+        <div className="finale-content">
+          <img src="/wedding-assets/seal.webp" alt="Maryam and Saif monogram" />
+          <p className="finale-copy">WE CANNOT WAIT TO CELEBRATE WITH YOU</p>
+          <h2 className="finale-title">MARYAM <span>&</span> SAIF</h2>
+          <p className="finale-date">05 · OCTOBER · 2026</p>
+          <div className="finale-actions">
+            <a className="finale-action" href="https://www.google.com/maps/search/?api=1&query=Grand+Hyatt+Muscat%2C+Muscat%2C+Oman" target="_blank" rel="noreferrer">
+              <MapPin size={16} /> LOCATION
+            </a>
+            <button className="finale-action" type="button" onClick={shareInvitation}><Share2 size={16} /> SHARE OUR DAY</button>
+          </div>
+        </div>
+      </footer>
+
+      <button
+        className={`music-control${musicEnabled ? ' on' : ''}`}
+        type="button"
+        onClick={() => setMusicEnabled((enabled) => !enabled)}
+        aria-label={musicEnabled ? 'إيقاف الموسيقى' : 'تشغيل الموسيقى'}
+        aria-pressed={musicEnabled}
+        title="Music control — track will be added in the final content stage"
+      >
+        {musicEnabled ? <Music2 size={20} /> : <VolumeX size={20} />}
+      </button>
+    </main>
+  );
+}
