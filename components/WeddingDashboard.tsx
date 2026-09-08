@@ -1,6 +1,6 @@
-import React, { ChangeEvent, FormEvent, useMemo, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import { CalendarDays, Copy, Eye, Heart, ImagePlus, LayoutDashboard, Link2, MapPin, Music2, Plus, Save, Settings2, Trash2, Users } from 'lucide-react';
-import { deleteInvitation, duplicateInvitation, emptyInvitation, getInvitationById, getInvitations, getRsvps, saveInvitation } from '../wedding/store';
+import { deleteInvitation, duplicateInvitation, emptyInvitation, getInvitationById, getInvitationByIdWithMedia, getInvitations, getRsvps, saveInvitation } from '../wedding/store';
 import type { Invitation } from '../wedding/types';
 import './WeddingDashboard.css';
 
@@ -22,11 +22,11 @@ const Shell = ({ active, children }: { active: 'invitations' | 'rsvp'; children:
 
 function InvitationsList() {
   const [items, setItems] = useState(getInvitations);
-  const remove = (item: Invitation) => {
+  const remove = async (item: Invitation) => {
     if (!window.confirm(`هل تريدين حذف دعوة ${item.brideName} و${item.groomName}؟`)) return;
-    deleteInvitation(item.id); setItems(getInvitations());
+    await deleteInvitation(item.id); setItems(getInvitations());
   };
-  const duplicate = (item: Invitation) => { const copy = duplicateInvitation(item); saveInvitation(copy); setItems(getInvitations()); };
+  const duplicate = async (item: Invitation) => { const copy = await duplicateInvitation(item); await saveInvitation(copy); setItems(getInvitations()); };
   return <Shell active="invitations">
     <header className="wd-page-head"><div><p>دعوات الزفاف</p><h1>الدعوات</h1><span>أنشئي الدعوات وعدّليها وانشريها من مكان واحد.</span></div><button className="wd-primary" onClick={() => navigate('/wedding-admin/new')}><Plus size={18}/> دعوة جديدة</button></header>
     <section className="wd-stats"><div><span>كل الدعوات</span><strong>{items.length}</strong></div><div><span>منشورة</span><strong>{items.filter(i=>i.status==='published').length}</strong></div><div><span>مسودات</span><strong>{items.filter(i=>i.status==='draft').length}</strong></div></section>
@@ -47,10 +47,14 @@ function InvitationEditor({ id }: { id?: string }) {
   const [data, setData] = useState<Invitation>(existing || emptyInvitation());
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState('');
+  useEffect(() => {
+    if (!id) return;
+    void getInvitationByIdWithMedia(id).then((loaded) => { if (loaded) setData(loaded); });
+  }, [id]);
   const set = <K extends keyof Invitation>(key: K, value: Invitation[K]) => { setSaved(false); setData(prev => ({...prev,[key]:value})); };
   const upload = (key: 'venueImage'|'musicUrl', file?: File) => { if (!file) return; const reader=new FileReader(); reader.onload=()=>set(key, String(reader.result)); reader.readAsDataURL(file); };
   const uploadGallery = (files: FileList | null) => { if(!files)return; Promise.all([...files].map(file=>new Promise<string>(resolve=>{const r=new FileReader();r.onload=()=>resolve(String(r.result));r.readAsDataURL(file)}))).then(images=>set('galleryImages', images)); };
-  const submit = (event: FormEvent<HTMLFormElement>) => {
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const submitter = (event.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
     const intent = submitter?.value as 'draft' | 'published' | 'current' | undefined;
@@ -58,7 +62,7 @@ function InvitationEditor({ id }: { id?: string }) {
     const slug = data.slug || slugify(`${data.brideName}-${data.groomName}`) || `wedding-${data.id.slice(0, 8)}`;
     const savedInvitation = { ...data, slug, status, updatedAt: new Date().toISOString() };
     try {
-      saveInvitation(savedInvitation);
+      await saveInvitation(savedInvitation);
       setData(savedInvitation);
       if (window.location.pathname === '/wedding-admin/new') {
         window.history.replaceState({}, '', `/wedding-admin/invitations/${savedInvitation.id}/edit`);
@@ -67,7 +71,7 @@ function InvitationEditor({ id }: { id?: string }) {
       setSaved(true);
     } catch (error) {
       setSaved(false);
-      setSaveError(error instanceof DOMException && error.name === 'QuotaExceededError' ? 'حجم الصور أو ملف الموسيقى أكبر من مساحة الحفظ المتاحة في المتصفح.' : error instanceof Error ? error.message : 'تعذر حفظ الدعوة. حاولي مرة أخرى.');
+      setSaveError(error instanceof Error ? error.message : 'تعذر حفظ الدعوة. حاولي مرة أخرى.');
     }
   };
   return <Shell active="invitations">
