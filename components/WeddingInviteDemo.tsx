@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useRef, useState } from 'react';
 import { Camera, Check, Heart, MapPin, Music2, Navigation, Share2, VolumeX, X } from 'lucide-react';
 
 const weddingDate = new Date('2026-10-05T19:00:00+04:00').getTime();
@@ -27,6 +27,9 @@ export default function WeddingInviteDemo() {
   const [rsvpResponse, setRsvpResponse] = useState<'accept' | 'decline' | ''>('');
   const [musicEnabled, setMusicEnabled] = useState(false);
   const [selectedGallery, setSelectedGallery] = useState<number | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const musicGainRef = useRef<GainNode | null>(null);
+  const musicTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     const interval = window.setInterval(() => setTimeLeft(calculateTimeLeft()), 1000);
@@ -73,6 +76,11 @@ export default function WeddingInviteDemo() {
     };
   }, [selectedGallery]);
 
+  useEffect(() => () => {
+    if (musicTimerRef.current !== null) window.clearInterval(musicTimerRef.current);
+    void audioContextRef.current?.close();
+  }, []);
+
   const openInvitation = () => {
     if (!isOpen && !isUnlocking) setIsUnlocking(true);
   };
@@ -93,6 +101,82 @@ export default function WeddingInviteDemo() {
       return;
     }
     await navigator.clipboard?.writeText(window.location.href);
+  };
+
+  const scheduleWeddingMelody = (context: AudioContext, output: GainNode) => {
+    const notes = [
+      523.25, 659.25, 783.99, 659.25,
+      587.33, 698.46, 880, 698.46,
+      493.88, 659.25, 783.99, 659.25,
+      523.25, 659.25, 783.99, 1046.5,
+    ];
+    const bass = [130.81, 146.83, 123.47, 130.81];
+    const start = context.currentTime + .08;
+
+    notes.forEach((frequency, index) => {
+      const noteStart = start + index * .72;
+      const oscillator = context.createOscillator();
+      const noteGain = context.createGain();
+      oscillator.type = index % 4 === 0 ? 'sine' : 'triangle';
+      oscillator.frequency.setValueAtTime(frequency, noteStart);
+      noteGain.gain.setValueAtTime(0, noteStart);
+      noteGain.gain.linearRampToValueAtTime(index % 4 === 0 ? .32 : .21, noteStart + .035);
+      noteGain.gain.exponentialRampToValueAtTime(.001, noteStart + 1.05);
+      oscillator.connect(noteGain).connect(output);
+      oscillator.start(noteStart);
+      oscillator.stop(noteStart + 1.1);
+
+      if (index % 4 === 0) {
+        const bassOscillator = context.createOscillator();
+        const bassGain = context.createGain();
+        bassOscillator.type = 'sine';
+        bassOscillator.frequency.setValueAtTime(bass[index / 4], noteStart);
+        bassGain.gain.setValueAtTime(.1, noteStart);
+        bassGain.gain.exponentialRampToValueAtTime(.001, noteStart + 2.5);
+        bassOscillator.connect(bassGain).connect(output);
+        bassOscillator.start(noteStart);
+        bassOscillator.stop(noteStart + 2.55);
+      }
+    });
+  };
+
+  const toggleMusic = async () => {
+    if (musicEnabled) {
+      if (musicTimerRef.current !== null) window.clearInterval(musicTimerRef.current);
+      musicTimerRef.current = null;
+      const context = audioContextRef.current;
+      const gain = musicGainRef.current;
+      if (context && gain) {
+        gain.gain.cancelScheduledValues(context.currentTime);
+        gain.gain.setValueAtTime(Math.max(gain.gain.value, .0001), context.currentTime);
+        gain.gain.exponentialRampToValueAtTime(.0001, context.currentTime + .45);
+        window.setTimeout(() => void context.suspend(), 500);
+      }
+      setMusicEnabled(false);
+      return;
+    }
+
+    let context = audioContextRef.current;
+    let gain = musicGainRef.current;
+    if (!context || !gain) {
+      context = new AudioContext();
+      gain = context.createGain();
+      gain.gain.setValueAtTime(.0001, context.currentTime);
+      gain.connect(context.destination);
+      audioContextRef.current = context;
+      musicGainRef.current = gain;
+    }
+    await context.resume();
+    gain.gain.cancelScheduledValues(context.currentTime);
+    gain.gain.setValueAtTime(Math.max(gain.gain.value, .0001), context.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.085, context.currentTime + .7);
+    scheduleWeddingMelody(context, gain);
+    musicTimerRef.current = window.setInterval(() => {
+      if (audioContextRef.current && musicGainRef.current) {
+        scheduleWeddingMelody(audioContextRef.current, musicGainRef.current);
+      }
+    }, 11_520);
+    setMusicEnabled(true);
   };
 
   return (
@@ -1090,9 +1174,38 @@ export default function WeddingInviteDemo() {
           box-shadow: 0 8px 24px rgba(0,0,0,.3);
           backdrop-filter: blur(8px);
           cursor: pointer;
+          transition: transform 180ms ease, background 180ms ease;
         }
 
-        .music-control.on { animation: music-glow 1.8s ease-in-out infinite; }
+        .music-control:hover { transform: translateY(-2px); }
+        .music-control.on {
+          background: linear-gradient(145deg, #8a1e35, #520914);
+          animation: music-glow 1.8s ease-in-out infinite;
+        }
+
+        .music-bars {
+          position: absolute;
+          left: -5px;
+          bottom: -3px;
+          display: flex;
+          align-items: end;
+          gap: 2px;
+          height: 13px;
+          padding: 3px 4px;
+          border-radius: 9px;
+          background: #f1d9aa;
+        }
+
+        .music-bars i {
+          width: 2px;
+          height: 5px;
+          display: block;
+          background: #6a1022;
+          animation: music-bar .7s ease-in-out infinite alternate;
+        }
+
+        .music-bars i:nth-child(2) { height: 9px; animation-delay: .18s; }
+        .music-bars i:nth-child(3) { height: 7px; animation-delay: .34s; }
 
         @media (max-width: 520px) {
           .countdown-section { min-height: 100dvh; padding: 78px 10px 64px; background-size: 520px auto; }
@@ -1116,6 +1229,11 @@ export default function WeddingInviteDemo() {
         @keyframes music-glow {
           0%, 100% { box-shadow: 0 8px 24px rgba(0,0,0,.3), 0 0 0 0 rgba(211,169,91,.24); }
           50% { box-shadow: 0 8px 24px rgba(0,0,0,.3), 0 0 0 8px rgba(211,169,91,0); }
+        }
+
+        @keyframes music-bar {
+          from { transform: scaleY(.45); }
+          to { transform: scaleY(1); }
         }
 
         @keyframes countdown-arrive {
@@ -1157,7 +1275,7 @@ export default function WeddingInviteDemo() {
             transition-duration: 1ms !important;
             animation-duration: 1ms !important;
           }
-          .countdown-cue span:last-child { animation: none; }
+          .countdown-cue span:last-child, .music-bars i { animation: none; }
         }
       `}</style>
 
@@ -1440,12 +1558,15 @@ export default function WeddingInviteDemo() {
       <button
         className={`music-control${musicEnabled ? ' on' : ''}`}
         type="button"
-        onClick={() => setMusicEnabled((enabled) => !enabled)}
+        onClick={toggleMusic}
         aria-label={musicEnabled ? 'إيقاف الموسيقى' : 'تشغيل الموسيقى'}
         aria-pressed={musicEnabled}
-        title="Music control — track will be added in the final content stage"
+        title={musicEnabled ? 'Pause our song' : 'Play our song'}
       >
         {musicEnabled ? <Music2 size={20} /> : <VolumeX size={20} />}
+        {musicEnabled && (
+          <span className="music-bars" aria-hidden="true"><i /><i /><i /></span>
+        )}
       </button>
     </main>
   );
