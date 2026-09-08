@@ -936,22 +936,15 @@ export default function WeddingInviteDemo() {
 
         .rsvp-card {
           position: relative;
-          width: min(100%, 590px);
+          width: min(100%, 560px);
           margin: 0 auto;
-          padding: 72px 64px 68px;
-          border: 1px solid rgba(178, 126, 54, .4);
+          padding: 38px 34px 36px;
+          border: 1px solid #b78037;
+          outline: 1px solid rgba(183, 128, 55, .42);
+          outline-offset: -9px;
           background: rgba(255, 253, 247, .94);
           box-shadow: 0 26px 62px rgba(84, 15, 29, .15);
           box-sizing: border-box;
-        }
-
-        .rsvp-card::before {
-          content: '';
-          position: absolute;
-          inset: 8px;
-          z-index: 0;
-          background: url('/wedding-assets/invitation-frame.webp') center / 100% 100% no-repeat;
-          pointer-events: none;
         }
 
         .rsvp-card > * { position: relative; z-index: 1; }
@@ -1113,8 +1106,7 @@ export default function WeddingInviteDemo() {
           .countdown-date { margin-top: 24px; font-size: 10px; letter-spacing: .16em; }
           .gallery-section, .rsvp-section { padding: 72px 16px 80px; }
           .rsvp-section::before, .rsvp-section::after { width: 245px; opacity: .34; }
-          .rsvp-card { padding: 58px 30px 54px; }
-          .rsvp-card::before { inset: 5px; }
+          .rsvp-card { padding: 31px 22px 29px; outline-offset: -7px; }
           .rsvp-choices { grid-template-columns: 1fr; gap: 8px; }
           .rsvp-choice { min-height: 58px; }
           .finale-actions { flex-direction: column; }
