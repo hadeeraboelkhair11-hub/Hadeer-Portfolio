@@ -1125,22 +1125,65 @@ export default function WeddingInviteDemo() {
 
         .finale-section {
           position: relative;
-          min-height: 72vh;
+          min-height: 100vh;
+          min-height: 100dvh;
           display: grid;
           place-items: center;
           overflow: hidden;
-          padding: 82px 18px;
+          padding: 96px 18px;
           color: #f1d9aa;
-          background: radial-gradient(circle at 50% 24%, #77162b 0%, #390710 48%, #170205 100%);
+          background:
+            radial-gradient(circle at 50% 22%, rgba(132, 25, 47, .84), transparent 46%),
+            linear-gradient(rgba(28, 1, 7, .76), rgba(20, 0, 5, .92)),
+            url('/wedding-assets/opening-bg.webp') center / cover no-repeat;
           text-align: center;
+          box-sizing: border-box;
         }
 
-        .finale-content { width: min(100%, 560px); }
-        .finale-content > img { width: 96px; height: 102px; object-fit: contain; filter: drop-shadow(0 10px 18px rgba(0,0,0,.4)); }
-        .finale-copy { margin: 22px 0 12px; color: #d4b474; font-size: 10px; font-weight: 600; letter-spacing: .19em; }
-        .finale-title { margin: 0; font: 400 clamp(40px, 11vw, 64px)/1.15 Georgia, serif; }
+        .finale-section::before,
+        .finale-section::after {
+          content: '';
+          position: absolute;
+          width: min(49vw, 410px);
+          aspect-ratio: 1;
+          pointer-events: none;
+          opacity: .72;
+          filter: drop-shadow(0 20px 30px rgba(0,0,0,.35));
+        }
+
+        .finale-section::before {
+          top: -105px;
+          left: -130px;
+          background: url('/wedding-assets/floral-corner-top.webp') center / contain no-repeat;
+        }
+
+        .finale-section::after {
+          right: -128px;
+          bottom: -118px;
+          background: url('/wedding-assets/floral-corner-bottom.webp') center / contain no-repeat;
+        }
+
+        .finale-content {
+          position: relative;
+          z-index: 1;
+          width: min(100%, 590px);
+          padding: 55px 34px 48px;
+          border: 1px solid rgba(218, 176, 99, .62);
+          outline: 1px solid rgba(218, 176, 99, .2);
+          outline-offset: -10px;
+          background: rgba(48, 3, 13, .65);
+          box-shadow: 0 34px 80px rgba(0,0,0,.38), inset 0 0 50px rgba(133, 25, 47, .16);
+          backdrop-filter: blur(4px);
+          box-sizing: border-box;
+        }
+
+        .finale-seal { width: 110px; height: 116px; object-fit: contain; filter: drop-shadow(0 12px 21px rgba(0,0,0,.48)); }
+        .finale-copy { margin: 22px 0 13px; color: #d4b474; font-size: 11px; font-weight: 600; letter-spacing: .2em; }
+        .finale-title { margin: 0; font: 400 clamp(42px, 10vw, 66px)/1.1 Georgia, serif; text-shadow: 0 4px 22px rgba(0,0,0,.3); }
         .finale-title span { display: block; color: #d0a052; font-size: .62em; font-style: italic; }
-        .finale-date { margin: 23px 0 27px; color: #d4b474; font-size: 11px; letter-spacing: .22em; }
+        .finale-divider { width: min(62%, 250px); height: 42px; object-fit: contain; filter: brightness(1.15); }
+        .finale-date { margin: 9px 0 9px; color: #e0c38b; font-size: 12px; letter-spacing: .22em; }
+        .finale-place { margin: 0 0 29px; color: rgba(240, 216, 171, .68); font: 400 14px/1.5 Georgia, serif; letter-spacing: .12em; }
         .finale-actions { display: flex; justify-content: center; gap: 10px; }
         .finale-action {
           min-width: 124px;
@@ -1156,7 +1199,11 @@ export default function WeddingInviteDemo() {
           font: 600 10px Cairo, sans-serif;
           letter-spacing: .1em;
           cursor: pointer;
+          text-decoration: none;
+          transition: transform 180ms ease, background 180ms ease;
         }
+
+        .finale-action:hover { transform: translateY(-2px); background: rgba(107, 16, 34, .88); }
 
         .music-control {
           position: fixed;
@@ -1224,6 +1271,23 @@ export default function WeddingInviteDemo() {
           .rsvp-choice { min-height: 58px; }
           .finale-actions { flex-direction: column; }
           .finale-action { width: min(100%, 250px); margin: 0 auto; }
+          .finale-section { padding: 76px 13px; }
+          .finale-section::before, .finale-section::after { width: 275px; opacity: .5; }
+          .finale-content { padding: 46px 22px 40px; outline-offset: -7px; }
+          .finale-seal { width: 92px; height: 98px; }
+        }
+
+        @media (max-width: 380px) {
+          .opening-stage { min-height: 560px; }
+          .countdown-title { font-size: 29px; }
+          .countdown-panel { padding-left: 5px; padding-right: 5px; }
+          .countdown-number { font-size: 26px; }
+          .countdown-label { font-size: 7px; letter-spacing: 0; }
+          .venue-map-frame { height: 285px; }
+          .venue-information { grid-template-columns: 1fr; gap: 9px; }
+          .venue-information-divider { width: 56px; height: 1px; margin: 0 auto; }
+          .rsvp-card { padding-left: 17px; padding-right: 17px; }
+          .finale-title { font-size: 40px; }
         }
 
         @keyframes music-glow {
@@ -1542,10 +1606,12 @@ export default function WeddingInviteDemo() {
 
       <footer className="finale-section">
         <div className="finale-content">
-          <img src="/wedding-assets/seal.webp" alt="Maryam and Saif monogram" />
+          <img className="finale-seal" src="/wedding-assets/seal.webp" alt="Maryam and Saif monogram" />
           <p className="finale-copy">WE CANNOT WAIT TO CELEBRATE WITH YOU</p>
           <h2 className="finale-title">MARYAM <span>&</span> SAIF</h2>
+          <img className="finale-divider" src="/wedding-assets/gold-divider.png" alt="" draggable={false} />
           <p className="finale-date">05 · OCTOBER · 2026</p>
+          <p className="finale-place">Grand Hyatt Muscat · 7:00 PM</p>
           <div className="finale-actions">
             <a className="finale-action" href="https://www.google.com/maps/search/?api=1&query=Grand+Hyatt+Muscat%2C+Muscat%2C+Oman" target="_blank" rel="noreferrer">
               <MapPin size={16} /> LOCATION
