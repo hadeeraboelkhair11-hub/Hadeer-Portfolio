@@ -23,6 +23,8 @@ export default function WeddingInviteDemo() {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft);
   const [rsvpSent, setRsvpSent] = useState(false);
   const [guestName, setGuestName] = useState('');
+  const [guestCount, setGuestCount] = useState('1');
+  const [rsvpResponse, setRsvpResponse] = useState<'accept' | 'decline' | ''>('');
   const [musicEnabled, setMusicEnabled] = useState(false);
   const [selectedGallery, setSelectedGallery] = useState<number | null>(null);
 
@@ -890,51 +892,146 @@ export default function WeddingInviteDemo() {
         }
 
         .rsvp-section {
-          padding: 90px 18px 102px;
+          position: relative;
+          overflow: hidden;
+          padding: 104px 18px 112px;
           color: #641222;
-          background: linear-gradient(180deg, #fffaf3, #f3e4ce);
+          background:
+            radial-gradient(circle at 50% 12%, rgba(255,255,255,.88), transparent 34%),
+            #fff7e9 url('/wedding-assets/invitation-paper.webp') center top / 720px auto repeat-y;
           text-align: center;
+        }
+
+        .rsvp-section::before,
+        .rsvp-section::after {
+          content: '';
+          position: absolute;
+          width: min(45vw, 360px);
+          aspect-ratio: 1;
+          opacity: .48;
+          pointer-events: none;
+          filter: drop-shadow(0 15px 24px rgba(91, 18, 34, .13));
+        }
+
+        .rsvp-section::before {
+          top: -96px;
+          left: -105px;
+          background: url('/wedding-assets/floral-corner-top.webp') center / contain no-repeat;
+        }
+
+        .rsvp-section::after {
+          right: -102px;
+          bottom: -105px;
+          background: url('/wedding-assets/floral-corner-bottom.webp') center / contain no-repeat;
         }
 
         .rsvp-section .section-icon, .rsvp-section .section-kicker { color: #aa742c; }
 
         .rsvp-copy {
           max-width: 500px;
-          margin: 14px auto 30px;
+          margin: 14px auto 32px;
           color: #7d6266;
-          font: 400 14px/1.8 Georgia, serif;
+          font: 400 16px/1.75 Georgia, serif;
         }
 
         .rsvp-card {
-          width: min(100%, 520px);
+          position: relative;
+          width: min(100%, 590px);
           margin: 0 auto;
-          padding: 30px 24px;
-          border: 1px solid rgba(178, 126, 54, .52);
-          background: rgba(255, 253, 248, .84);
-          box-shadow: 0 20px 48px rgba(84, 15, 29, .12);
+          padding: 72px 64px 68px;
+          border: 1px solid rgba(178, 126, 54, .4);
+          background: rgba(255, 253, 247, .94);
+          box-shadow: 0 26px 62px rgba(84, 15, 29, .15);
+          box-sizing: border-box;
         }
 
-        .rsvp-form { display: grid; gap: 15px; text-align: left; }
-        .rsvp-form label { display: grid; gap: 7px; color: #9b6c34; font-size: 10px; font-weight: 600; letter-spacing: .1em; }
+        .rsvp-card::before {
+          content: '';
+          position: absolute;
+          inset: 8px;
+          z-index: 0;
+          background: url('/wedding-assets/invitation-frame.webp') center / 100% 100% no-repeat;
+          pointer-events: none;
+        }
+
+        .rsvp-card > * { position: relative; z-index: 1; }
+
+        .rsvp-form {
+          display: grid;
+          gap: 18px;
+          text-align: left;
+        }
+
+        .rsvp-field {
+          display: grid;
+          gap: 8px;
+        }
+
+        .rsvp-field > span,
+        .rsvp-choice-label {
+          color: #9b6c34;
+          font: 600 11px/1.4 Cairo, sans-serif;
+          letter-spacing: .12em;
+        }
+
         .rsvp-form input, .rsvp-form select {
           width: 100%;
-          min-height: 50px;
-          padding: 11px 13px;
+          min-height: 52px;
+          padding: 11px 15px;
           border: 1px solid #d6bb91;
           border-radius: 2px;
           outline: none;
           color: #57101d;
-          background: #fffefa;
-          font: 400 14px Cairo, sans-serif;
+          background: rgba(255,255,255,.78);
+          font: 400 15px Cairo, sans-serif;
+          box-sizing: border-box;
         }
+
         .rsvp-form input:focus, .rsvp-form select:focus { border-color: #8d3041; box-shadow: 0 0 0 3px rgba(109, 15, 33, .08); }
+
+        .rsvp-choices {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
+        }
+
+        .rsvp-choice {
+          position: relative;
+          min-height: 72px;
+          display: grid;
+          place-items: center;
+          padding: 10px;
+          border: 1px solid #d6bb91;
+          color: #6f3740;
+          background: rgba(255,255,255,.66);
+          font: 500 14px/1.35 Georgia, serif;
+          text-align: center;
+          cursor: pointer;
+          transition: color 180ms ease, background 180ms ease, border-color 180ms ease, transform 180ms ease;
+        }
+
+        .rsvp-choice input {
+          position: absolute;
+          width: 1px;
+          min-height: 1px;
+          opacity: 0;
+        }
+
+        .rsvp-choice.selected {
+          border-color: #7a1b2e;
+          color: #f7e5bc;
+          background: linear-gradient(145deg, #7b172c, #510813);
+          box-shadow: 0 9px 22px rgba(79, 8, 20, .2);
+          transform: translateY(-2px);
+        }
+
         .rsvp-submit {
-          min-height: 52px;
+          min-height: 54px;
           display: inline-flex;
           align-items: center;
           justify-content: center;
           gap: 9px;
-          margin-top: 5px;
+          margin-top: 2px;
           border: 1px solid #8c3141;
           border-radius: 2px;
           color: #f5dfb6;
@@ -944,10 +1041,10 @@ export default function WeddingInviteDemo() {
           cursor: pointer;
         }
 
-        .rsvp-success { padding: 18px 5px; }
-        .rsvp-success-badge { width: 62px; height: 62px; display: grid; place-items: center; margin: 0 auto 18px; border-radius: 50%; color: #f5dfb6; background: #6a1022; }
-        .rsvp-success h3 { margin: 0 0 9px; font: 400 30px/1.3 Georgia, serif; }
-        .rsvp-success p { margin: 0; color: #7d6266; }
+        .rsvp-success { padding: 38px 5px 34px; }
+        .rsvp-success-badge { width: 68px; height: 68px; display: grid; place-items: center; margin: 0 auto 20px; border: 1px solid #b9853d; border-radius: 50%; color: #f5dfb6; background: #6a1022; box-shadow: 0 10px 25px rgba(89, 11, 28, .2); }
+        .rsvp-success h3 { margin: 0 0 10px; font: 400 32px/1.3 Georgia, serif; }
+        .rsvp-success p { max-width: 350px; margin: 0 auto; color: #7d6266; font: 400 15px/1.7 Georgia, serif; }
 
         .finale-section {
           position: relative;
@@ -1015,7 +1112,11 @@ export default function WeddingInviteDemo() {
           .countdown-label { margin-top: 6px; font-size: clamp(7px, 2vw, 9px); letter-spacing: .025em; }
           .countdown-date { margin-top: 24px; font-size: 10px; letter-spacing: .16em; }
           .gallery-section, .rsvp-section { padding: 72px 16px 80px; }
-          .rsvp-card { padding: 25px 18px; }
+          .rsvp-section::before, .rsvp-section::after { width: 245px; opacity: .34; }
+          .rsvp-card { padding: 58px 30px 54px; }
+          .rsvp-card::before { inset: 5px; }
+          .rsvp-choices { grid-template-columns: 1fr; gap: 8px; }
+          .rsvp-choice { min-height: 58px; }
           .finale-actions { flex-direction: column; }
           .finale-action { width: min(100%, 250px); margin: 0 auto; }
         }
@@ -1272,31 +1373,56 @@ export default function WeddingInviteDemo() {
               <div className="rsvp-success">
                 <div className="rsvp-success-badge"><Check size={28} /></div>
                 <h3>Thank you, {guestName}</h3>
-                <p>Your response has been received.</p>
+                <p>
+                  {rsvpResponse === 'accept'
+                    ? `We have reserved ${guestCount} ${guestCount === '1' ? 'place' : 'places'} for you. We cannot wait to celebrate together.`
+                    : 'Your response has been received. You will be in our thoughts on our special day.'}
+                </p>
               </div>
             ) : (
               <form className="rsvp-form" onSubmit={submitRsvp}>
-                <label>
-                  YOUR NAME
+                <label className="rsvp-field">
+                  <span>YOUR NAME</span>
                   <input value={guestName} onChange={(event) => setGuestName(event.target.value)} placeholder="Full name" required />
                 </label>
-                <label>
-                  NUMBER OF GUESTS
-                  <select defaultValue="1">
-                    <option value="1">1 Guest</option>
-                    <option value="2">2 Guests</option>
-                    <option value="3">3 Guests</option>
-                    <option value="4">4 Guests</option>
-                  </select>
-                </label>
-                <label>
-                  YOUR RESPONSE
-                  <select defaultValue="" required>
-                    <option value="" disabled>Select response</option>
-                    <option value="accept">Joyfully accepts</option>
-                    <option value="decline">Regretfully declines</option>
-                  </select>
-                </label>
+                <div className="rsvp-field">
+                  <span className="rsvp-choice-label">WILL YOU JOIN US?</span>
+                  <div className="rsvp-choices">
+                    <label className={`rsvp-choice${rsvpResponse === 'accept' ? ' selected' : ''}`}>
+                      <input
+                        type="radio"
+                        name="response"
+                        value="accept"
+                        checked={rsvpResponse === 'accept'}
+                        onChange={() => setRsvpResponse('accept')}
+                        required
+                      />
+                      Joyfully accepts
+                    </label>
+                    <label className={`rsvp-choice${rsvpResponse === 'decline' ? ' selected' : ''}`}>
+                      <input
+                        type="radio"
+                        name="response"
+                        value="decline"
+                        checked={rsvpResponse === 'decline'}
+                        onChange={() => setRsvpResponse('decline')}
+                        required
+                      />
+                      Regretfully declines
+                    </label>
+                  </div>
+                </div>
+                {rsvpResponse === 'accept' && (
+                  <label className="rsvp-field">
+                    <span>NUMBER OF GUESTS</span>
+                    <select value={guestCount} onChange={(event) => setGuestCount(event.target.value)}>
+                      <option value="1">1 Guest</option>
+                      <option value="2">2 Guests</option>
+                      <option value="3">3 Guests</option>
+                      <option value="4">4 Guests</option>
+                    </select>
+                  </label>
+                )}
                 <button className="rsvp-submit" type="submit"><Heart size={17} /> SEND RSVP</button>
               </form>
             )}
