@@ -1,11 +1,11 @@
 import React, { FormEvent, useEffect, useRef, useState } from 'react';
 import { Camera, Check, Heart, MapPin, Music2, Navigation, Share2, VolumeX, X } from 'lucide-react';
-
-const weddingDate = new Date('2026-10-05T19:00:00+04:00').getTime();
+import type { Invitation } from '../wedding/types';
+import { addRsvp, royalBurgundySeed } from '../wedding/store';
 
 type TimeLeft = { days: number; hours: number; minutes: number; seconds: number };
 
-const calculateTimeLeft = (): TimeLeft => {
+const calculateTimeLeft = (weddingDate: number): TimeLeft => {
   const distance = Math.max(0, weddingDate - Date.now());
   return {
     days: Math.floor(distance / 86_400_000),
@@ -15,24 +15,30 @@ const calculateTimeLeft = (): TimeLeft => {
   };
 };
 
-export default function WeddingInviteDemo() {
+export default function WeddingInviteDemo({ invitation = royalBurgundySeed }: { invitation?: Invitation }) {
+  const weddingDate = new Date(`${invitation.weddingDate}T${invitation.ceremonyTime || '19:00'}:00`).getTime();
+  const displayDate = invitation.weddingDate ? new Date(`${invitation.weddingDate}T12:00:00`).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }).toUpperCase() : 'DATE TO BE ANNOUNCED';
+  const displayTime = invitation.ceremonyTime ? new Date(`2000-01-01T${invitation.ceremonyTime}`).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '';
+  const mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(invitation.address || invitation.venueName)}&output=embed`;
   const [isOpen, setIsOpen] = useState(false);
   const [isUnlocking, setIsUnlocking] = useState(false);
   const [showCountdown, setShowCountdown] = useState(false);
   const [countdownInView, setCountdownInView] = useState(false);
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft);
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>(() => calculateTimeLeft(weddingDate));
   const [rsvpSent, setRsvpSent] = useState(false);
   const [guestName, setGuestName] = useState('');
   const [guestCount, setGuestCount] = useState('1');
   const [rsvpResponse, setRsvpResponse] = useState<'accept' | 'decline' | ''>('');
+  const [guestMessage, setGuestMessage] = useState('');
   const [musicEnabled, setMusicEnabled] = useState(false);
   const [selectedGallery, setSelectedGallery] = useState<number | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const musicGainRef = useRef<GainNode | null>(null);
   const musicTimerRef = useRef<number | null>(null);
+  const uploadedAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    const interval = window.setInterval(() => setTimeLeft(calculateTimeLeft()), 1000);
+    const interval = window.setInterval(() => setTimeLeft(calculateTimeLeft(weddingDate)), 1000);
     return () => window.clearInterval(interval);
   }, []);
 
@@ -91,11 +97,12 @@ export default function WeddingInviteDemo() {
 
   const submitRsvp = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    addRsvp({ id: crypto.randomUUID(), invitationId: invitation.id, guestName, attending: rsvpResponse === 'accept', guests: rsvpResponse === 'accept' ? Number(guestCount) : 0, message: guestMessage, submittedAt: new Date().toISOString() });
     setRsvpSent(true);
   };
 
   const shareInvitation = async () => {
-    const data = { title: 'Maryam & Saif', text: 'Join us to celebrate our wedding day.', url: window.location.href };
+    const data = { title: `${invitation.brideName} & ${invitation.groomName}`, text: invitation.invitationText || 'Join us to celebrate our wedding day.', url: window.location.href };
     if (navigator.share) {
       await navigator.share(data).catch(() => undefined);
       return;
@@ -141,6 +148,12 @@ export default function WeddingInviteDemo() {
   };
 
   const toggleMusic = async () => {
+    if (invitation.musicUrl) {
+      if (!uploadedAudioRef.current) { uploadedAudioRef.current = new Audio(invitation.musicUrl); uploadedAudioRef.current.loop = true; }
+      if (musicEnabled) uploadedAudioRef.current.pause(); else await uploadedAudioRef.current.play();
+      setMusicEnabled(!musicEnabled);
+      return;
+    }
     if (musicEnabled) {
       if (musicTimerRef.current !== null) window.clearInterval(musicTimerRef.current);
       musicTimerRef.current = null;
@@ -180,13 +193,18 @@ export default function WeddingInviteDemo() {
   };
 
   return (
-    <main className="wedding-demo" aria-label="Wedding invitation">
+    <main className="wedding-demo" aria-label="Wedding invitation" style={{'--w-primary': invitation.theme.primary, '--w-secondary': invitation.theme.secondary, '--w-background': invitation.theme.background, '--w-text': invitation.theme.text} as React.CSSProperties}>
       <style>{`
         .wedding-demo {
           min-height: 100vh;
           overflow-x: hidden;
           background: #160306;
         }
+        .wedding-demo .opening-names, .wedding-demo .venue-title, .wedding-demo .section-title { color: var(--w-text); }
+        .wedding-demo .venue-directions, .wedding-demo .rsvp-submit { background: var(--w-primary); }
+        .dress-section { padding: 76px 18px; color: var(--w-text); background: var(--w-background); text-align:center; }
+        .dress-card { width:min(100%,620px); margin:auto; padding:34px 22px; border:1px solid var(--w-secondary); background:rgba(255,255,255,.66); }
+        .dress-card p { margin:8px 0 0; font:400 24px/1.5 Georgia,serif; }
 
         .wedding-opening {
           min-height: 100vh;
@@ -1366,12 +1384,12 @@ export default function WeddingInviteDemo() {
             <img
               className="opening-monogram"
               src="/wedding-assets/opening-monogram.webp"
-              alt="Maryam and Saif"
+              alt={`${invitation.brideName} and ${invitation.groomName}`}
               draggable={false}
             />
             <p className="opening-together">TOGETHER WITH THEIR FAMILIES</p>
-            <h1 className="opening-names">MARYAM <span>&amp;</span> SAIF</h1>
-            <p className="opening-date">05 · OCTOBER · 2026</p>
+            <h1 className="opening-names">{invitation.brideName.toUpperCase()} <span>&amp;</span> {invitation.groomName.toUpperCase()}</h1>
+            <p className="opening-date">{displayDate.replace(/ /g, ' · ')}</p>
           </div>
 
           <div className="lock-cluster">
@@ -1407,7 +1425,7 @@ export default function WeddingInviteDemo() {
         </button>
       </section>
 
-      <section
+      {invitation.sections.countdown && <section
         id="wedding-countdown"
         className={`countdown-section${countdownInView ? ' is-visible' : ''}`}
         aria-labelledby="countdown-title"
@@ -1429,24 +1447,24 @@ export default function WeddingInviteDemo() {
               </div>
             ))}
           </div>
-          <p className="countdown-date">05 · OCTOBER · 2026</p>
+          <p className="countdown-date">{displayDate.replace(/ /g, ' · ')}</p>
         </div>
-      </section>
+      </section>}
 
-      <section className="venue-section" aria-labelledby="venue-title">
+      {invitation.sections.venue && <section className="venue-section" aria-labelledby="venue-title">
         <div className="venue-shell">
           <div className="venue-pin" aria-hidden="true"><MapPin size={23} strokeWidth={1.6} /></div>
           <p className="venue-kicker">THE VENUE</p>
-          <h2 id="venue-title" className="venue-title">GRAND HYATT MUSCAT</h2>
-          <p className="venue-place">MUSCAT · OMAN</p>
+          <h2 id="venue-title" className="venue-title">{invitation.venueName.toUpperCase()}</h2>
+          <p className="venue-place">{invitation.address.toUpperCase()}</p>
           <img className="venue-divider" src="/wedding-assets/gold-divider.png" alt="" draggable={false} />
 
           <div className="venue-card">
             <div className="venue-map-frame">
               <iframe
                 className="venue-map"
-                title="Grand Hyatt Muscat map"
-                src="https://www.google.com/maps?q=Grand%20Hyatt%20Muscat%2C%20Muscat%2C%20Oman&output=embed"
+                title={`${invitation.venueName} map`}
+                src={mapEmbed}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
               />
@@ -1454,19 +1472,19 @@ export default function WeddingInviteDemo() {
             <div className="venue-information">
               <div className="venue-fact">
                 <span>THE DATE</span>
-                <strong>05 OCTOBER 2026</strong>
+                <strong>{displayDate}</strong>
               </div>
               <span className="venue-information-divider" aria-hidden="true" />
               <div className="venue-fact">
                 <span>THE TIME</span>
-                <strong>7:00 PM</strong>
+                <strong>{displayTime}</strong>
               </div>
             </div>
           </div>
 
           <a
             className="venue-directions"
-            href="https://www.google.com/maps/search/?api=1&query=Grand+Hyatt+Muscat%2C+Muscat%2C+Oman"
+            href={invitation.mapsUrl}
             target="_blank"
             rel="noreferrer"
           >
@@ -1474,9 +1492,9 @@ export default function WeddingInviteDemo() {
             OPEN IN GOOGLE MAPS
           </a>
         </div>
-      </section>
+      </section>}
 
-      <section className="gallery-section" aria-labelledby="gallery-title">
+      {invitation.sections.gallery && <section className="gallery-section" aria-labelledby="gallery-title">
         <div className="gallery-shell">
           <Camera className="section-icon" size={25} strokeWidth={1.5} />
           <p className="section-kicker">OUR DAY</p>
@@ -1496,8 +1514,8 @@ export default function WeddingInviteDemo() {
                 aria-label={`View ${label.toLowerCase()}`}
               >
                 <img
-                  className={`gallery-sprite gallery-sprite-${index}`}
-                  src="/wedding-assets/arch-gallery.png"
+                  className={invitation.galleryImages[index] ? '' : `gallery-sprite gallery-sprite-${index}`}
+                  src={invitation.galleryImages[index] || '/wedding-assets/arch-gallery.png'}
                   alt={label}
                   draggable={false}
                 />
@@ -1506,7 +1524,7 @@ export default function WeddingInviteDemo() {
           </div>
           <span className="gallery-caption">TAP A MOMENT TO VIEW</span>
         </div>
-      </section>
+      </section>}
 
       {selectedGallery !== null && (
         <div
@@ -1526,8 +1544,8 @@ export default function WeddingInviteDemo() {
           </button>
           <div className="gallery-lightbox-card" onClick={(event) => event.stopPropagation()}>
             <img
-              className={`gallery-sprite gallery-sprite-${selectedGallery}`}
-              src="/wedding-assets/arch-gallery.png"
+              className={invitation.galleryImages[selectedGallery] ? '' : `gallery-sprite gallery-sprite-${selectedGallery}`}
+              src={invitation.galleryImages[selectedGallery] || '/wedding-assets/arch-gallery.png'}
               alt="Selected wedding moment"
               draggable={false}
             />
@@ -1535,12 +1553,14 @@ export default function WeddingInviteDemo() {
         </div>
       )}
 
-      <section className="rsvp-section" aria-labelledby="rsvp-title">
+      {invitation.sections.dressCode && invitation.dressCode && <section className="dress-section" aria-label="Dress code"><div className="dress-card"><span className="section-kicker">DRESS CODE</span><p>{invitation.dressCode}</p></div></section>}
+
+      {invitation.sections.rsvp && <section className="rsvp-section" aria-labelledby="rsvp-title">
         <div className="rsvp-shell">
           <Heart className="section-icon" size={27} strokeWidth={1.5} />
           <p className="section-kicker">KINDLY REPLY</p>
           <h2 id="rsvp-title" className="section-title">Will you celebrate with us?</h2>
-          <p className="rsvp-copy">Please send your response before September 15, 2026. We would be delighted to share our day with you.</p>
+          <p className="rsvp-copy">Please send your response before {invitation.rsvpDeadline || 'the celebration'}. We would be delighted to share our day with you.</p>
 
           <div className="rsvp-card">
             {rsvpSent ? (
@@ -1597,23 +1617,24 @@ export default function WeddingInviteDemo() {
                     </select>
                   </label>
                 )}
+                <label className="rsvp-field"><span>MESSAGE (OPTIONAL)</span><input value={guestMessage} onChange={(event)=>setGuestMessage(event.target.value)} placeholder="A note for the couple" /></label>
                 <button className="rsvp-submit" type="submit"><Heart size={17} /> SEND RSVP</button>
               </form>
             )}
           </div>
         </div>
-      </section>
+      </section>}
 
       <footer className="finale-section">
         <div className="finale-content">
-          <img className="finale-seal" src="/wedding-assets/seal.webp" alt="Maryam and Saif monogram" />
+          <img className="finale-seal" src="/wedding-assets/seal.webp" alt={`${invitation.brideName} and ${invitation.groomName} monogram`} />
           <p className="finale-copy">WE CANNOT WAIT TO CELEBRATE WITH YOU</p>
-          <h2 className="finale-title">MARYAM <span>&</span> SAIF</h2>
+          <h2 className="finale-title">{invitation.brideName.toUpperCase()} <span>&</span> {invitation.groomName.toUpperCase()}</h2>
           <img className="finale-divider" src="/wedding-assets/gold-divider.png" alt="" draggable={false} />
-          <p className="finale-date">05 · OCTOBER · 2026</p>
-          <p className="finale-place">Grand Hyatt Muscat · 7:00 PM</p>
+          <p className="finale-date">{displayDate.replace(/ /g, ' · ')}</p>
+          <p className="finale-place">{invitation.venueName} · {displayTime}</p>
           <div className="finale-actions">
-            <a className="finale-action" href="https://www.google.com/maps/search/?api=1&query=Grand+Hyatt+Muscat%2C+Muscat%2C+Oman" target="_blank" rel="noreferrer">
+            <a className="finale-action" href={invitation.mapsUrl} target="_blank" rel="noreferrer">
               <MapPin size={16} /> LOCATION
             </a>
             <button className="finale-action" type="button" onClick={shareInvitation}><Share2 size={16} /> SHARE OUR DAY</button>
@@ -1621,7 +1642,7 @@ export default function WeddingInviteDemo() {
         </div>
       </footer>
 
-      <button
+      {invitation.sections.music && <button
         className={`music-control${musicEnabled ? ' on' : ''}`}
         type="button"
         onClick={toggleMusic}
@@ -1633,7 +1654,7 @@ export default function WeddingInviteDemo() {
         {musicEnabled && (
           <span className="music-bars" aria-hidden="true"><i /><i /><i /></span>
         )}
-      </button>
+      </button>}
     </main>
   );
 }
