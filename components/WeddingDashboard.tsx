@@ -60,6 +60,9 @@ function InvitationEditor({ id }: { id?: string }) {
     try {
       saveInvitation(savedInvitation);
       setData(savedInvitation);
+      if (window.location.pathname === '/wedding-admin/new') {
+        window.history.replaceState({}, '', `/wedding-admin/invitations/${savedInvitation.id}/edit`);
+      }
       setSaveError('');
       setSaved(true);
     } catch (error) {
