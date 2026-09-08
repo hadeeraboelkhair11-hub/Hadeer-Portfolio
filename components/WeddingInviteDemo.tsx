@@ -1,5 +1,5 @@
 import React, { FormEvent, useEffect, useState } from 'react';
-import { Camera, Check, Heart, MapPin, Music2, Navigation, Share2, VolumeX } from 'lucide-react';
+import { Camera, Check, Heart, MapPin, Music2, Navigation, Share2, VolumeX, X } from 'lucide-react';
 
 const weddingDate = new Date('2026-10-05T19:00:00+04:00').getTime();
 
@@ -24,6 +24,7 @@ export default function WeddingInviteDemo() {
   const [rsvpSent, setRsvpSent] = useState(false);
   const [guestName, setGuestName] = useState('');
   const [musicEnabled, setMusicEnabled] = useState(false);
+  const [selectedGallery, setSelectedGallery] = useState<number | null>(null);
 
   useEffect(() => {
     const interval = window.setInterval(() => setTimeLeft(calculateTimeLeft()), 1000);
@@ -55,6 +56,20 @@ export default function WeddingInviteDemo() {
     observer.observe(section);
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (selectedGallery === null) return;
+    const previousOverflow = document.body.style.overflow;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setSelectedGallery(null);
+    };
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [selectedGallery]);
 
   const openInvitation = () => {
     if (!isOpen && !isUnlocking) setIsUnlocking(true);
@@ -696,13 +711,30 @@ export default function WeddingInviteDemo() {
         }
 
         .gallery-section {
-          padding: 88px 18px 96px;
+          position: relative;
+          overflow: hidden;
+          padding: 102px 18px 110px;
           color: #f2dcae;
-          background: radial-gradient(circle at 20% 10%, rgba(133, 17, 39, .5), transparent 30%), #26040b;
+          background:
+            radial-gradient(circle at 50% 0%, rgba(149, 24, 49, .48), transparent 36%),
+            radial-gradient(circle at 10% 76%, rgba(116, 15, 37, .48), transparent 30%),
+            #25030a;
           text-align: center;
         }
 
+        .gallery-section::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          opacity: .13;
+          background: url('/wedding-assets/opening-bg.webp') center / cover no-repeat;
+          filter: blur(1px) saturate(.8);
+          pointer-events: none;
+        }
+
         .gallery-shell, .rsvp-shell {
+          position: relative;
+          z-index: 1;
           width: min(100%, 760px);
           margin: 0 auto;
         }
@@ -726,19 +758,136 @@ export default function WeddingInviteDemo() {
 
         .gallery-copy {
           max-width: 470px;
-          margin: 14px auto 30px;
+          margin: 14px auto 38px;
           color: rgba(241, 220, 180, .68);
-          font: 400 14px/1.8 Georgia, serif;
+          font: 400 16px/1.75 Georgia, serif;
         }
 
-        .gallery-art {
-          padding: 7px;
-          border: 1px solid rgba(202, 155, 79, .58);
-          background: #f8efe2;
-          box-shadow: 0 28px 64px rgba(0, 0, 0, .42);
+        .gallery-arches {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          align-items: center;
+          gap: 15px;
+          width: 100%;
         }
 
-        .gallery-art img { display: block; width: 100%; height: auto; }
+        .gallery-arch-button {
+          position: relative;
+          display: block;
+          width: 100%;
+          aspect-ratio: 2 / 3.05;
+          padding: 0;
+          overflow: hidden;
+          border: 1px solid rgba(224, 185, 111, .8);
+          border-radius: 50% 50% 3px 3px / 23% 23% 3px 3px;
+          background: #4b0916;
+          box-shadow: 0 24px 42px rgba(0,0,0,.42), 0 0 0 5px rgba(205, 156, 76, .07);
+          cursor: pointer;
+          transition: transform 300ms ease, filter 300ms ease;
+        }
+
+        .gallery-arch-button:nth-child(2) { transform: translateY(-18px); }
+        .gallery-arch-button:hover { transform: translateY(-8px) scale(1.018); filter: brightness(1.06); }
+        .gallery-arch-button:nth-child(2):hover { transform: translateY(-25px) scale(1.018); }
+
+        .gallery-arch-button::after {
+          content: '';
+          position: absolute;
+          inset: 6px;
+          border: 1px solid rgba(250, 221, 157, .45);
+          border-radius: inherit;
+          box-shadow: inset 0 0 32px rgba(28, 0, 7, .34);
+          pointer-events: none;
+        }
+
+        .gallery-sprite {
+          display: block;
+          width: 300%;
+          max-width: none;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .gallery-sprite-0 { transform: translateX(0); }
+        .gallery-sprite-1 { transform: translateX(-33.3333%); }
+        .gallery-sprite-2 { transform: translateX(-66.6666%); }
+
+        .gallery-caption {
+          display: block;
+          margin-top: 28px;
+          color: rgba(226, 185, 111, .78);
+          font: 600 10px/1.4 Cairo, sans-serif;
+          letter-spacing: .2em;
+        }
+
+        .gallery-lightbox {
+          position: fixed;
+          inset: 0;
+          z-index: 50;
+          display: grid;
+          place-items: center;
+          padding: 22px;
+          border: 0;
+          background: rgba(17, 0, 4, .9);
+          backdrop-filter: blur(12px);
+        }
+
+        .gallery-lightbox-card {
+          position: relative;
+          width: min(88vw, 430px);
+          aspect-ratio: 2 / 3.05;
+          overflow: hidden;
+          border: 1px solid rgba(229, 189, 112, .9);
+          border-radius: 50% 50% 4px 4px / 23% 23% 4px 4px;
+          background: #4b0916;
+          box-shadow: 0 34px 80px rgba(0,0,0,.62), 0 0 0 8px rgba(205, 156, 76, .08);
+          animation: gallery-open 420ms cubic-bezier(.16,.8,.2,1) both;
+        }
+
+        .gallery-lightbox-close {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          z-index: 51;
+          width: 44px;
+          height: 44px;
+          display: grid;
+          place-items: center;
+          border: 1px solid rgba(230, 193, 122, .55);
+          border-radius: 50%;
+          color: #f3dcae;
+          background: rgba(79, 7, 20, .86);
+          cursor: pointer;
+        }
+
+        @keyframes gallery-open {
+          from { opacity: 0; transform: translateY(20px) scale(.94); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @media (max-width: 620px) {
+          .gallery-section { padding: 84px 0 92px; }
+          .gallery-section .section-icon,
+          .gallery-section .section-kicker,
+          .gallery-section .section-title,
+          .gallery-copy { margin-left: 18px; margin-right: 18px; }
+          .gallery-arches {
+            grid-template-columns: repeat(3, 72vw);
+            align-items: center;
+            gap: 14px;
+            padding: 22px 14vw 28px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+            box-sizing: border-box;
+          }
+          .gallery-arches::-webkit-scrollbar { display: none; }
+          .gallery-arch-button,
+          .gallery-arch-button:nth-child(2) { transform: none; scroll-snap-align: center; }
+          .gallery-arch-button:hover,
+          .gallery-arch-button:nth-child(2):hover { transform: scale(1.012); }
+          .gallery-caption { margin-top: 2px; }
+        }
 
         .rsvp-section {
           padding: 90px 18px 102px;
@@ -1056,13 +1205,60 @@ export default function WeddingInviteDemo() {
         <div className="gallery-shell">
           <Camera className="section-icon" size={25} strokeWidth={1.5} />
           <p className="section-kicker">OUR DAY</p>
-          <h2 id="gallery-title" className="section-title">A glimpse of the celebration</h2>
-          <p className="gallery-copy">A timeless evening filled with warm candlelight, burgundy blooms and the people we love.</p>
-          <div className="gallery-art">
-            <img src="/wedding-assets/arch-gallery.png" alt="Wedding venue, burgundy flowers and candlelit reception" />
+          <h2 id="gallery-title" className="section-title">A glimpse of our celebration</h2>
+          <p className="gallery-copy">Warm candlelight, burgundy blooms and a night made for beautiful memories.</p>
+          <div className="gallery-arches" aria-label="Wedding gallery">
+            {[
+              'The celebration venue',
+              'Burgundy wedding flowers',
+              'The candlelit reception',
+            ].map((label, index) => (
+              <button
+                className="gallery-arch-button"
+                type="button"
+                key={label}
+                onClick={() => setSelectedGallery(index)}
+                aria-label={`View ${label.toLowerCase()}`}
+              >
+                <img
+                  className={`gallery-sprite gallery-sprite-${index}`}
+                  src="/wedding-assets/arch-gallery.png"
+                  alt={label}
+                  draggable={false}
+                />
+              </button>
+            ))}
           </div>
+          <span className="gallery-caption">TAP A MOMENT TO VIEW</span>
         </div>
       </section>
+
+      {selectedGallery !== null && (
+        <div
+          className="gallery-lightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Wedding gallery preview"
+          onClick={() => setSelectedGallery(null)}
+        >
+          <button
+            className="gallery-lightbox-close"
+            type="button"
+            onClick={() => setSelectedGallery(null)}
+            aria-label="Close gallery preview"
+          >
+            <X size={21} />
+          </button>
+          <div className="gallery-lightbox-card" onClick={(event) => event.stopPropagation()}>
+            <img
+              className={`gallery-sprite gallery-sprite-${selectedGallery}`}
+              src="/wedding-assets/arch-gallery.png"
+              alt="Selected wedding moment"
+              draggable={false}
+            />
+          </div>
+        </div>
+      )}
 
       <section className="rsvp-section" aria-labelledby="rsvp-title">
         <div className="rsvp-shell">
