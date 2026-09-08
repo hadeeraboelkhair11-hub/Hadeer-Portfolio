@@ -33,6 +33,11 @@ export const saveInvitation = (invitation: Invitation) => {
   const index = items.findIndex((item) => item.id === invitation.id);
   if (index >= 0) items[index] = invitation; else items.unshift(invitation);
   localStorage.setItem(INVITATIONS_KEY, JSON.stringify(items));
+  const saved = safeParse<Invitation[]>(localStorage.getItem(INVITATIONS_KEY), []);
+  if (!saved.some((item) => item.id === invitation.id && item.updatedAt === invitation.updatedAt)) {
+    throw new Error('تعذر التأكد من حفظ الدعوة. حاولي مرة أخرى.');
+  }
+  return invitation;
 };
 
 export const deleteInvitation = (id: string) => localStorage.setItem(INVITATIONS_KEY, JSON.stringify(getInvitations().filter((item) => item.id !== id)));
