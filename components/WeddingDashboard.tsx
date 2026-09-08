@@ -55,7 +55,7 @@ function InvitationEditor({ id }: { id?: string }) {
     const submitter = (event.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
     const intent = submitter?.value as 'draft' | 'published' | 'current' | undefined;
     const status = intent === 'published' ? 'published' : intent === 'draft' ? 'draft' : data.status;
-    const slug = data.slug || slugify(`${data.brideName}-${data.groomName}`);
+    const slug = data.slug || slugify(`${data.brideName}-${data.groomName}`) || `wedding-${data.id.slice(0, 8)}`;
     const savedInvitation = { ...data, slug, status, updatedAt: new Date().toISOString() };
     try {
       saveInvitation(savedInvitation);
