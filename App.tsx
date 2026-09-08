@@ -17,7 +17,7 @@ const App: React.FC = () => {
   if (window.location.pathname.startsWith('/invite/')) {
     const slug = window.location.pathname.split('/').filter(Boolean)[1];
     const invitation = slug === 'demo' ? royalBurgundySeed : getInvitationBySlug(slug);
-    return invitation && invitation.status === 'published' ? <WeddingInviteDemo invitation={invitation} /> : <main style={{minHeight:'100vh',display:'grid',placeItems:'center',fontFamily:'sans-serif',background:'#fff8ef',color:'#641222'}}><div style={{textAlign:'center'}}><h1>Invitation not found</h1><a href="/wedding-admin" style={{color:'inherit'}}>Return to dashboard</a></div></main>;
+    return invitation ? <WeddingInviteDemo invitation={invitation} /> : <main style={{minHeight:'100vh',display:'grid',placeItems:'center',fontFamily:'sans-serif',background:'#fff8ef',color:'#641222'}}><div style={{textAlign:'center'}}><h1>Invitation not found</h1><a href="/wedding-admin" style={{color:'inherit'}}>Return to dashboard</a></div></main>;
   }
   const [activeSection, setActiveSection] = useState('home'); const [lang, setLang] = useState<Language>('ar');
   useEffect(()=>{const h=()=>{const sections=['home','services','portfolio','reviews','contact']; const p=window.scrollY+100; for(const s of sections){const e=document.getElementById(s);if(e&&p>=e.offsetTop&&p<e.offsetTop+e.offsetHeight)setActiveSection(s)}};window.addEventListener('scroll',h);return()=>window.removeEventListener('scroll',h)},[]);
