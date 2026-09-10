@@ -9,10 +9,17 @@ import ReviewsSection from './components/ReviewsSection';
 import AIConsultant from './components/AIConsultant';
 import ContactForm from './components/ContactForm';
 import Footer from './components/Footer';
+import ScopeLockApp from './components/scopelock/ScopeLockApp';
+import './components/scopelock/scopelock.css';
 
 export type Language = 'ar' | 'en';
 
 const App: React.FC = () => {
+  const path = window.location.pathname.replace(/\/$/, '') || '/';
+
+  if (path === '/scopelock' || path.startsWith('/scopelock/')) {
+    return <ScopeLockApp initialPath={path} />;
+  }
   const [activeSection, setActiveSection] = useState('home');
   const [lang, setLang] = useState<Language>('ar');
 
