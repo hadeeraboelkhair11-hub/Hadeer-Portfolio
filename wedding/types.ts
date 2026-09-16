@@ -1,4 +1,32 @@
 export type InvitationStatus = 'draft' | 'published';
+export type InvitationLanguage = 'ar' | 'en';
+export type WeddingTemplateId = 'royal-burgundy' | 'old-money-burgundy';
+
+export type TimelineItem = { id: string; title: string; time: string; description?: string; icon?: string };
+export type LoveStoryItem = { id: string; title: string; date: string; description: string; image: string };
+export type ExternalLink = { id: string; label: string; url: string };
+
+export type OldMoneyContent = {
+  heroImage: string;
+  monogramImage: string;
+  ceremonyTitle: string;
+  ceremonyDescription: string;
+  receptionTitle: string;
+  receptionTime: string;
+  receptionDescription: string;
+  timeline: TimelineItem[];
+  loveStoryTitle: string;
+  loveStory: LoveStoryItem[];
+  dressCodeTitle: string;
+  dressCodeDescription: string;
+  dressCodeColors: string[];
+  stayEnabled: boolean;
+  hotelName: string;
+  hotelDescription: string;
+  hotelAddress: string;
+  hotelUrl: string;
+  externalLinks: ExternalLink[];
+};
 
 export type WeddingSections = {
   countdown: boolean;
@@ -7,6 +35,12 @@ export type WeddingSections = {
   dressCode: boolean;
   rsvp: boolean;
   music: boolean;
+  welcome?: boolean;
+  details?: boolean;
+  timeline?: boolean;
+  loveStory?: boolean;
+  whereToStay?: boolean;
+  externalLinks?: boolean;
 };
 
 export type WeddingTheme = {
@@ -19,7 +53,8 @@ export type WeddingTheme = {
 export type Invitation = {
   id: string;
   slug: string;
-  templateId: 'royal-burgundy';
+  templateId: WeddingTemplateId;
+  language: InvitationLanguage;
   status: InvitationStatus;
   brideName: string;
   groomName: string;
@@ -36,6 +71,7 @@ export type Invitation = {
   venueImage: string;
   galleryImages: string[];
   musicUrl: string;
+  oldMoney?: OldMoneyContent;
   sections: WeddingSections;
   theme: WeddingTheme;
   createdAt: string;
@@ -51,4 +87,3 @@ export type RsvpResponse = {
   message: string;
   submittedAt: string;
 };
-

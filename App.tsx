@@ -9,6 +9,7 @@ import AIConsultant from './components/AIConsultant';
 import ContactForm from './components/ContactForm';
 import Footer from './components/Footer';
 import WeddingInviteDemo from './components/WeddingInviteDemo';
+import OldMoneyBurgundyInvite from './components/OldMoneyBurgundyInvite';
 import WeddingDashboard from './components/WeddingDashboard';
 import { getInvitationBySlug, getInvitationBySlugWithMedia, royalBurgundySeed } from './wedding/store';
 import type { Invitation } from './wedding/types';
@@ -20,7 +21,8 @@ const InvitationRoute = ({ slug }: { slug: string }) => {
     if (slug === 'demo') return;
     void getInvitationBySlugWithMedia(slug).then(setInvitation);
   }, [slug]);
-  return invitation ? <WeddingInviteDemo invitation={invitation} /> : <main style={{minHeight:'100vh',display:'grid',placeItems:'center',fontFamily:'sans-serif',background:'#fff8ef',color:'#641222'}}><div style={{textAlign:'center'}}><h1>Invitation not found</h1><a href="/wedding-admin" style={{color:'inherit'}}>Return to dashboard</a></div></main>;
+  if (!invitation) return <main style={{minHeight:'100vh',display:'grid',placeItems:'center',fontFamily:'sans-serif',background:'#fff8ef',color:'#641222'}}><div style={{textAlign:'center'}}><h1>Invitation not found</h1><a href="/wedding-admin" style={{color:'inherit'}}>Return to dashboard</a></div></main>;
+  return invitation.templateId === 'old-money-burgundy' ? <OldMoneyBurgundyInvite invitation={invitation}/> : <WeddingInviteDemo invitation={invitation}/>;
 };
 const App: React.FC = () => {
   if (window.location.pathname.startsWith('/wedding-admin')) return <WeddingDashboard />;
