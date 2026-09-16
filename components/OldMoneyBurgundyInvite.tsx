@@ -21,6 +21,12 @@ export default function OldMoneyBurgundyInvite({ invitation }: { invitation: Inv
   const lang = invitation.language || 'en';
   const t = dictionary[lang];
   const dir = lang === 'ar' ? 'rtl' : 'ltr';
+  const localized = (value: string) => lang === 'ar' ? ({
+    'Wedding Ceremony':'مراسم الزفاف','Join us as we exchange our vows.':'شاركونا لحظة تبادل العهود.',
+    'Dinner & Reception':'العشاء وحفل الاستقبال','Dinner, celebration and dancing to follow.':'يتبع المراسم عشاء واحتفال مع ضيوفنا.',
+    'Guest Arrival':'استقبال الضيوف','Welcome drinks':'مشروبات ترحيبية','Ceremony':'المراسم','The exchange of vows':'تبادل العهود','Reception':'حفل الاستقبال','Dinner and celebration':'العشاء والاحتفال',
+    'Dress Code':'الزي المطلوب','Formal evening attire':'ملابس سهرة رسمية','Our Love Story':'قصتنا',
+  } as Record<string,string>)[value] || value : value;
   const date = invitation.weddingDate ? new Intl.DateTimeFormat(lang === 'ar' ? 'ar-OM' : 'en-GB', { day:'2-digit', month:'long', year:'numeric' }).format(new Date(`${invitation.weddingDate}T12:00:00`)) : '';
   const initials = `${invitation.brideName?.[0] || ''}${invitation.groomName?.[0] || ''}`;
 
@@ -64,13 +70,13 @@ export default function OldMoneyBurgundyInvite({ invitation }: { invitation: Inv
         {content.heroImage && <div className="om-hero-photo"><img src={`${A}/gold-frame.png`} alt=""/><img src={content.heroImage} alt=""/></div>}
       </section>}
 
-      {invitation.sections.details !== false && <section className="om-paper om-details"><div className="om-paper-card"><span className="om-kicker">{t.details}</span><h2>{date}</h2><div className="om-detail-grid"><article><CalendarDays/><h3>{content.ceremonyTitle || t.ceremony}</h3><time>{invitation.ceremonyTime}</time><p>{content.ceremonyDescription}</p></article><article><Volume2/><h3>{content.receptionTitle || t.reception}</h3><time>{content.receptionTime}</time><p>{content.receptionDescription}</p></article></div></div></section>}
+      {invitation.sections.details !== false && <section className="om-paper om-details"><div className="om-paper-card"><span className="om-kicker">{t.details}</span><h2>{date}</h2><div className="om-detail-grid"><article><CalendarDays/><h3>{localized(content.ceremonyTitle || t.ceremony)}</h3><time>{invitation.ceremonyTime}</time><p>{localized(content.ceremonyDescription)}</p></article><article><Volume2/><h3>{localized(content.receptionTitle || t.reception)}</h3><time>{content.receptionTime}</time><p>{localized(content.receptionDescription)}</p></article></div></div></section>}
 
-      {invitation.sections.timeline !== false && content.timeline.length > 0 && <section className="om-dark om-timeline"><span className="om-kicker">{t.timeline}</span><h2>{t.timeline}</h2><div className="om-timeline-list">{content.timeline.map((item, index) => <article key={item.id}><span>{String(index + 1).padStart(2,'0')}</span><div><time>{item.time}</time><h3>{item.title}</h3>{item.description && <p>{item.description}</p>}</div></article>)}</div></section>}
+      {invitation.sections.timeline !== false && content.timeline.length > 0 && <section className="om-dark om-timeline"><span className="om-kicker">{t.timeline}</span><h2>{t.timeline}</h2><div className="om-timeline-list">{content.timeline.map((item, index) => <article key={item.id}><span>{String(index + 1).padStart(2,'0')}</span><div><time>{item.time}</time><h3>{localized(item.title)}</h3>{item.description && <p>{localized(item.description)}</p>}</div></article>)}</div></section>}
 
       {invitation.sections.loveStory !== false && content.loveStory.length > 0 && <section className="om-paper om-story"><span className="om-kicker">{content.loveStoryTitle || t.story}</span><h2>{content.loveStoryTitle || t.story}</h2><div className="om-story-list">{content.loveStory.map((item, index) => <article key={item.id} className={index % 2 ? 'reverse' : ''}><div className="om-polaroid"><img className="om-polaroid-frame" src={`${A}/polaroid-frame.png`} alt=""/>{item.image ? <img className="om-polaroid-photo" src={item.image} alt=""/> : <div className="om-photo-placeholder">{initials}</div>}</div><div><time>{item.date}</time><h3>{item.title}</h3><p>{item.description}</p></div></article>)}</div></section>}
 
-      {invitation.sections.dressCode && <section className="om-dark om-dress"><img src={`${A}/ivory-flowers.png`} alt=""/><div><span className="om-kicker">{content.dressCodeTitle || t.dress}</span><h2>{content.dressCodeTitle || t.dress}</h2><p>{content.dressCodeDescription || invitation.dressCode}</p><div className="om-palette">{content.dressCodeColors.map((color) => <i key={color} style={{background:color}} title={color}/>)}</div></div></section>}
+      {invitation.sections.dressCode && <section className="om-dark om-dress"><img src={`${A}/ivory-flowers.png`} alt=""/><div><span className="om-kicker">{localized(content.dressCodeTitle || t.dress)}</span><h2>{localized(content.dressCodeTitle || t.dress)}</h2><p>{localized(content.dressCodeDescription || invitation.dressCode)}</p><div className="om-palette">{content.dressCodeColors.map((color) => <i key={color} style={{background:color}} title={color}/>)}</div></div></section>}
 
       {invitation.sections.whereToStay !== false && content.stayEnabled && <section className="om-paper om-stay"><div className="om-paper-card"><Hotel/><span className="om-kicker">{t.stay}</span><h2>{content.hotelName}</h2><p>{content.hotelDescription}</p><address>{content.hotelAddress}</address>{content.hotelUrl && <a href={content.hotelUrl} target="_blank" rel="noreferrer">{lang === 'ar' ? 'عرض الفندق' : 'View Hotel'} ↗</a>}</div></section>}
 
